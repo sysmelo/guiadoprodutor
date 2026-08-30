@@ -358,6 +358,203 @@ export const studioOneVsBusComparison = {
   ]
 };
 
+export interface ChannelSplitterPreset {
+  id: string;
+  title: string;
+  mode: 'Frequency Split (Multibanda)' | 'Channel Split (Mid/Side)' | 'Normal Split (Paralelo)';
+  targetTrack: string;
+  difficulty: 'Iniciante' | 'Intermediário' | 'Avançado';
+  badgeColor: string;
+  description: string;
+  setupSteps: string[];
+  splits: {
+    name: string;
+    range: string;
+    plugins: string[];
+    settings: string;
+    whyItWorks: string;
+  }[];
+  proTip: string;
+}
+
+export const studioOneChannelSplitterPresets: ChannelSplitterPreset[] = [
+  {
+    id: 'splitter-808-sub-clean',
+    title: '808 Monolítico & Distorção nos Harmônicos (Frequency Split)',
+    mode: 'Frequency Split (Multibanda)',
+    targetTrack: '808 / Sub-Bass / Synth Bass',
+    difficulty: 'Intermediário',
+    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+    description: 'Divide o 808 exatamente em 120Hz. A parte subgrave permanece 100% limpa, sólida e travada em mono, enquanto as frequências médias e agudas recebem saturação e distorção analógica para soar com peso e presença em qualquer smartphone ou fone de ouvido.',
+    setupSteps: [
+      '1. No canal do 808, abra a aba de Efeitos (Inserts).',
+      '2. Clique na seta ao lado de Inserts e selecione o componente nativo "Splitter".',
+      '3. Clique duas vezes no Splitter e altere o modo para "Frequency Split".',
+      '4. Ajuste a frequência de corte (Crossover Point) para 120 Hz.',
+      '5. No Ramo A (Split Baixo): Mantenha limpo ou insira um Pro EQ3 com Low-Pass em 120Hz em Mono.',
+      '6. No Ramo B (Split Alto): Insira o RedlightDist (modo Tube) + Chorus sutil.'
+    ],
+    splits: [
+      {
+        name: 'Ramo A: Subgraves Puros (20Hz - 120Hz)',
+        range: '< 120 Hz',
+        plugins: ['Pro EQ3 (Mono)', 'Limiter Sutil'],
+        settings: 'Zero distorção, centro mono estrito, sinal de sub intacto.',
+        whyItWorks: 'Garante o impacto físico no subwoofer de boate e no som do carro sem embolar com o bumbo.'
+      },
+      {
+        name: 'Ramo B: Harmônicos Médios (120Hz - 20kHz)',
+        range: '> 120 Hz',
+        plugins: ['RedlightDist (Tube Mode)', 'Pro EQ3', 'Chorus'],
+        settings: 'Drive em 45%, High-Cut em 8kHz para suavizar arestas, Stereo Width 120%.',
+        whyItWorks: 'Gera textura e riqueza de médios que tornam a linha de baixo audível em qualquer caixa portátil.'
+      }
+    ],
+    proTip: 'Você pode equilibrar o volume de cada ramo individualmente dentro da própria janela do Splitter!'
+  },
+  {
+    id: 'splitter-mid-side-master',
+    title: 'Processamento Mid/Side Nativo no Vocal ou Mix Bus',
+    mode: 'Channel Split (Mid/Side)',
+    targetTrack: 'Vocal Bus / Stereo Instruments / Mix Bus',
+    difficulty: 'Avançado',
+    badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40',
+    description: 'Separa o sinal estéreo em canal Central (Mid - onde moram a voz, bumbo e baixo) e canal Lateral (Side - onde moram reverbs, pads e aberturas estéreo), permitindo equalização e compressão independentes sem plugins de terceiros.',
+    setupSteps: [
+      '1. Insira o "Splitter" no canal estéreo desejado.',
+      '2. Altere o modo do Splitter para "Channel Split" e ative a opção "Mid / Side".',
+      '3. Ramo Esquerdo = Mid (Centro) | Ramo Direito = Side (Laterais).',
+      '4. No canal Side: Adicione o Pro EQ3 e corte todos os graves abaixo de 150Hz com High-Pass.',
+      '5. No canal Side: Dê um sutil boost de +1.5 dB em 12kHz com High-Shelf para abrir o "ar" estéreo.',
+      '6. No canal Mid: Foque no corpo central da voz e soco do bumbo.'
+    ],
+    splits: [
+      {
+        name: 'Ramo Mid (Centro da Mix)',
+        range: 'Sinal Monofônico / Centro',
+        plugins: ['Pro EQ3', 'Fat Channel XT (Tube Opto)'],
+        settings: 'Foco no corpo dos 1kHz - 3kHz e graves sólidos. Compressão musical de 2dB.',
+        whyItWorks: 'Preserva a presença direta e punch do centro da música sem alterar o estéreo.'
+      },
+      {
+        name: 'Ramo Side (Laterais Estéreo)',
+        range: 'Diferença L/R (Espacialidade)',
+        plugins: ['Pro EQ3 (HPF 150Hz + High Shelf 12k)', 'Analog Delay sutil'],
+        settings: 'Low Cut em 150Hz (elimina lama lateral) + Boost de +2dB em 12kHz (brilho aéreo).',
+        whyItWorks: 'Abre a imagem estéreo da música de forma ultra limpa e 100% compatível com reprodução mono.'
+      }
+    ],
+    proTip: 'Ao limpar os subgraves do canal Side com HPF em 150Hz, sua mixagem ganha mais headroom instantaneamente!'
+  },
+  {
+    id: 'splitter-parallel-crush',
+    title: 'Compressão Paralela Inline Direta na Bateria (Normal Split)',
+    mode: 'Normal Split (Paralelo)',
+    targetTrack: 'Snare / Drum Bus / Parallel Crush',
+    difficulty: 'Iniciante',
+    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+    description: 'Divide o sinal em 2 caminhos paralelos dentro do mesmo canal sem precisar criar um canal FX separado. Ramo 1 seco e Ramo 2 esmagado com compressor FET 1176.',
+    setupSteps: [
+      '1. Insira o "Splitter" no canal da Caixa (Snare) ou Drum Bus.',
+      '2. Deixe no modo padrão "Normal Split".',
+      '3. No Ramo A: Deixe o sinal seco direto.',
+      '4. No Ramo B: Insira o Fat Channel XT (modo FET, Ratio 20:1, Attack 0.1ms, Release 50ms, Redução -12dB).',
+      '5. Ajuste o fader interno do Ramo B no Splitter para dosar a agressividade desejada.'
+    ],
+    splits: [
+      {
+        name: 'Ramo A: Sinal Seco e Transiente Natural',
+        range: 'Dinâmica Original',
+        plugins: ['Sinal Direto (Dry)'],
+        settings: 'Volume 100% (0 dB)',
+        whyItWorks: 'Mantém o ataque inicial e a dinâmica viva do baterista.'
+      },
+      {
+        name: 'Ramo B: Sinal Esmagado (Crushed)',
+        range: 'Sustentação & Sala',
+        plugins: ['Fat Channel XT (FET 1176)', 'RedlightDist'],
+        settings: 'Compressão extrema de 15dB de redução, volume dosado em -14 dB.',
+        whyItWorks: 'Traz a cauda da sala, o corpo da esteira e o peso moderno sem sacrificar o ataque.'
+      }
+    ],
+    proTip: 'Perfeito para quando você quer processar uma única pista isolada sem encher a janela de canais FX do mixer!'
+  }
+];
+
+export const studioOneAutoDuckerGuide = {
+  title: 'Ducker Automático no Reverb & Delay (Técnica "Espaço Limpo")',
+  subtitle: 'Como criar efeitos espaciais gigantescos que desaparecem automaticamente quando o cantor canta',
+  objective: 'Evitar que a cauda do Reverb e as repetições do Delay compitam com a dicção e a inteligibilidade do vocal principal.',
+  whyItWorks: 'O Compressor no canal FX lê o sinal do vocal via Sidechain. Enquanto o vocal estiver ativo, o Reverb é atenuado de 4 a 6 dB. Quando o cantor respira ou termina a frase, o Reverb sobe suavemente ao volume total.',
+  stepByStep: [
+    {
+      step: 1,
+      title: 'Configurar o Canal Auxiliar (FX Channel)',
+      instruction: 'Crie seu canal FX com o Reverb nativo OpenAIR ou Analog Delay configurado em 100% WET.'
+    },
+    {
+      step: 2,
+      title: 'Inserir o Compressor Nativo APÓS o Reverb',
+      instruction: 'Na lista de Inserts do canal FX, adicione o plugin nativo "Compressor" logo abaixo do OpenAIR / Delay.'
+    },
+    {
+      step: 3,
+      title: 'Ativar o Botão Sidechain',
+      instruction: 'No topo da janela do plugin Compressor, clique no botão "Sidechain" para deixá-lo iluminado.'
+    },
+    {
+      step: 4,
+      title: 'Enviar o Sinal do Vocal para o Sidechain',
+      instruction: 'Vá até a pista de Lead Vocal > Seção Sends > Clique no "+" > Na lista, selecione "Sidechains > FX Reverb > Compressor (Sidechain)".'
+    },
+    {
+      step: 5,
+      title: 'Calibrar os Parâmetros do Ducker',
+      instruction: 'No Compressor do canal FX: Ratio 4:1 a 6:1 | Attack: 5 ms a 15 ms (rápido) | Release: 150 ms a 350 ms (musical) | Threshold: Ajuste até ver 4 dB a 6 dB de redução de ganho enquanto a voz canta.'
+    }
+  ],
+  presetParameters: [
+    { param: 'Threshold', val: '-24 dBFS', note: 'Ajuste até atenuar apenas durante a emissão vocal' },
+    { param: 'Ratio', val: '4:1 a 6:1', note: 'Atenuação firme sem corte abrupto' },
+    { param: 'Attack', val: '10 ms', note: 'Tempo de reação rápido ao primeiro fonema' },
+    { param: 'Release', val: '250 ms', note: 'Tempo que o Reverb leva para subir no final da frase' },
+    { param: 'Gain Reduction Alvo', val: '-4 dB a -6 dB', note: 'Volume reduzido durante a cantoria' }
+  ]
+};
+
+export const studioOneAbbeyRoadFilterMatrix = {
+  title: 'Técnica Abbey Road Reverb EQ Filter',
+  description: 'A técnica lendária dos estúdios Abbey Road para reverbs sedosos e sem lama. Filtrar o sinal antes do processamento de reverberação elimina 100% da embolação em graves e aspereza metálica em agudos.',
+  goldenRules: [
+    { freq: 'High-Pass Filter (HPF / Low Cut)', value: '350 Hz (24 dB/oct)', purpose: 'Elimina frequências graves e ressonâncias de peito que criam lama na cauda do Reverb.' },
+    { freq: 'Low-Pass Filter (LPF / High Cut)', value: '6.000 Hz / 6 kHz (12 a 24 dB/oct)', purpose: 'Elimina consoantes sibilantes (S, T, Ch) e chiados de microfone de ecoarem no reverb com som metálico de lata.' },
+    { freq: 'Posicionamento do EQ', value: 'ANTES do Reverb (Pré-FX)', purpose: 'Impede que o algoritmo de convolução calcule reflexões para frequências que você não quer no espaço sonoro.' }
+  ],
+  stylePresets: [
+    { style: 'Vocal Pop & Trap', hpf: '350 Hz', lpf: '6.5 kHz', decay: '2.0s', character: 'Brilhante e espaçoso sem competir com o centro da mix' },
+    { style: 'Rock & Indie', hpf: '450 Hz', lpf: '5.0 kHz', decay: '1.4s', character: 'Ambiente denso e escuro estilo plate vintage analógico' },
+    { style: 'R&B / Soul / Balada', hpf: '300 Hz', lpf: '7.5 kHz', decay: '2.8s', character: 'Cauda longa luxuosa com ar aveludado e sustentação doce' },
+    { style: 'Snare / Bateria', hpf: '500 Hz', lpf: '4.5 kHz', decay: '1.2s', character: 'Ambiência de sala sem ressonâncias graves no bumbo' }
+  ]
+};
+
+export const studioOneGainLoudnessMatrix = {
+  title: 'Guia de Gain Staging, K-System & Alvos de LUFS no Studio One 7',
+  gainStagingOverview: 'O segredo para plugins soarem analógicos e não distorcerem digitalmente é calibrar o sinal em -18 dBFS RMS / -12 dBFS Peak na gravação e inserção.',
+  gainStagingSteps: [
+    { step: 'Medidor de Entrada', target: '-18 dBFS RMS / -12 dBFS Peak', desc: 'No Inspector de Pista (F4), gire o Input Gain até a pista bater no ponto ideal antes dos plugins.' },
+    { step: 'Headroom do Mix Bus', target: '-6 dBFS a -3 dBFS True Peak', desc: 'Ao terminar a mixagem, o fader Master deve estar em 0.0dB com os picos batendo entre -6dB e -3dB para a masterização.' },
+    { step: 'Latência Zero Engine', target: 'Modo Z (Z-Drop Ativo)', desc: 'Pressione Z para ativar o motor de baixa latência em hardware nativo durante tracking.' }
+  ],
+  streamingTargets: [
+    { platform: 'Spotify & Amazon Music', integratedLufs: '-14 LUFS', truePeak: '-1.0 dBFS', dynamicRange: '10 - 12 PLR', note: 'Padrão global de normalização' },
+    { platform: 'Apple Music & Tidal', integratedLufs: '-14 a -16 LUFS', truePeak: '-1.0 dBFS', dynamicRange: '12 - 14 PLR', note: 'Preserva máxima dinâmica com som aberto' },
+    { platform: 'YouTube Video & Web', integratedLufs: '-14 LUFS', truePeak: '-1.0 dBFS', dynamicRange: '9 - 11 PLR', note: 'Garante clareza em caixas de TV e smartphones' },
+    { platform: 'Trap / Hip-Hop / EDM (Club Mixes)', integratedLufs: '-8 a -6.5 LUFS', truePeak: '-0.3 dBFS', dynamicRange: '6 - 8 PLR', note: 'Pressão máxima de graves com Limiter / Clipper nativo' },
+    { platform: 'CD / WAV Não-Normalizado', integratedLufs: '-9 a -8 LUFS', truePeak: '-0.2 dBFS', dynamicRange: '7 - 9 PLR', note: 'Impacto acústico comercial sem normalização de volume' }
+  ]
+};
+
 export const studioOneNativePluginsGuide = [
   {
     name: 'Pro EQ3',
@@ -394,5 +591,18 @@ export const studioOneNativePluginsGuide = [
     category: 'Distorção & Saturação Harmônica',
     description: 'Processador de saturação analógica com múltiplos modelos: Tube, Transistor, OpAmp, Fuzz e controle de frequências de corte.',
     bestFor: 'Saturação paralela em 808s, calor em sintetizadores e textura para vocais modernos.'
+  },
+  {
+    name: 'Tricomp',
+    category: 'Compressor Multibanda & Glue de Barramento',
+    description: 'Compressor multibanda de 3 faixas com controle de ataque/release automático e saturação analógica de saída.',
+    bestFor: 'Mix Bus Glue, controle de frequências graves no Master e coesão final.'
+  },
+  {
+    name: 'Limiter',
+    category: 'Limitador de Pico / True Peak Brickwall',
+    description: 'Limitador transparente com teto configurável de True Peak, modo soft-clip e medidor de redução de ganho ultra preciso.',
+    bestFor: 'Masterização final, controle de True Peak em -1.0 dBFS e maximização de loudness.'
   }
 ];
+
