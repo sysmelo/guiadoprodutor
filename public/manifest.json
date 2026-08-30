@@ -1,0 +1,16 @@
+{
+  "name": "MELO MIX & MASTER ASSISTANT",
+  "short_name": "MeloAudio",
+  "description": "Seu guia profissional para Mixagem, Masterização e Exportação no FL Studio.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1013",
+  "theme_color": "#ff7700",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}

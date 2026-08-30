@@ -1,0 +1,6 @@
+{
+  "name": "MELO MIX & MASTER ASSISTANT",
+  "description": "Seu guia profissional para Mixagem, Masterização e Exportação no FL Studio. Sistema inteligente de decisões para áudio.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
