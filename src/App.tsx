@@ -18,6 +18,7 @@ import { SettingsOfflineView } from './components/SettingsOfflineView';
 import { AudioAnalyzerModal } from './components/AudioAnalyzerModal';
 import { DelayCalculatorModal } from './components/DelayCalculatorModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
+import { GitHubExportModal } from './components/GitHubExportModal';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
@@ -28,6 +29,7 @@ export const App: React.FC = () => {
   const [isAnalyzerOpen, setIsAnalyzerOpen] = useState<boolean>(false);
   const [isDelayCalcOpen, setIsDelayCalcOpen] = useState<boolean>(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState<boolean>(false);
+  const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false);
 
   // Global Keyboard Shortcuts (Ctrl/Cmd + 1-9, 0, P, comma, F, D, /, Escape)
   useEffect(() => {
@@ -171,6 +173,7 @@ export const App: React.FC = () => {
         onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
         onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
+        onOpenGitHubExport={() => setIsGitHubModalOpen(true)}
       />
 
       {/* Main Studio Body (Sidebar + Content) */}
@@ -192,6 +195,8 @@ export const App: React.FC = () => {
             <DashboardView
               onNavigate={setCurrentTab}
               activeProject={activeProject}
+              projects={projects}
+              onSelectProject={handleSelectProject}
               onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
               onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
             />
@@ -323,6 +328,12 @@ export const App: React.FC = () => {
       <ShortcutsModal
         isOpen={isShortcutsOpen}
         onClose={() => setIsShortcutsOpen(false)}
+      />
+
+      {/* GitHub Export Modal */}
+      <GitHubExportModal
+        isOpen={isGitHubModalOpen}
+        onClose={() => setIsGitHubModalOpen(false)}
       />
     </div>
   );

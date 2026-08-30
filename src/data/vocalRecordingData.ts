@@ -523,3 +523,176 @@ export const vocalTrackArrangement: VocalTrackRole[] = [
     description: 'Sussurros, gritos, frases soltas de apoio e efeitos criativos que preenchem os vazios do beat.'
   }
 ];
+
+export interface RecSetupPillar {
+  id: string;
+  title: string;
+  shortTitle: string;
+  badge: string;
+  flLocation: string;
+  importance: string;
+  summary: string;
+  keySettings: {
+    label: string;
+    value: string;
+    recommendation: string;
+    explanation: string;
+  }[];
+  stepByStep: string[];
+  proTips: string[];
+  fatalMistakes: string[];
+}
+
+export const recSetupPillarsData: RecSetupPillar[] = [
+  {
+    id: 'buffer-latency',
+    title: '1. Configurações de Buffer & Driver ASIO (Latência Zero)',
+    shortTitle: 'Buffer & Latência Zero',
+    badge: 'Hardware & Audio Settings',
+    flLocation: 'FL Studio > Options (F10) > Audio Settings',
+    importance: 'CRÍTICO: Define se o vocalista canta no tempo ou sofre com eco/atraso',
+    summary: 'A latência de gravação é o tempo que o áudio leva para entrar na interface, ser processado pelo processador e voltar para os fones. Em sessões de gravação, o buffer deve ser reduzido ao mínimo estável.',
+    keySettings: [
+      {
+        label: 'Driver de Áudio (Device)',
+        value: 'ASIO Proprietário da Interface (ex: Focusrite USB ASIO, UMC ASIO, Apollo Thunderbolt)',
+        recommendation: 'Use o driver oficial da interface',
+        explanation: 'Drivers proprietários conversam diretamente com o hardware com bypass no kernel do Windows, entregando latência de ~3ms.'
+      },
+      {
+        label: 'Tamanho do Buffer (Buffer Size)',
+        value: '64 samples (1.3ms) ou 128 samples (2.7ms)',
+        recommendation: '64 a 128 samples para gravar; 512+ para mixar',
+        explanation: '128 samples é o ponto perfeito onde o atraso é 100% imperceptível para o cérebro humano e o processador não sobrecarrega.'
+      },
+      {
+        label: 'Taxa de Amostragem (Sample Rate)',
+        value: '44.100 Hz (CD/Streaming) ou 48.000 Hz (Vídeo/Áudio Pro)',
+        recommendation: '48.000 Hz padrão recomendado',
+        explanation: '48 kHz tem resposta ligeiramente mais rápida de buffer e é o padrão de sincronização de vídeo e plataformas digitais.'
+      },
+      {
+        label: 'Desativação de Plugins com Latência (PDC)',
+        value: 'Bypass em Limiters no Master Bus e Plugins Lineares',
+        recommendation: 'Master Bus 100% LIMPO no tracking',
+        explanation: 'Plugins como Ozone Maximizer, Pro-L2 (com Lookahead) ou EQs de fase linear forçam o FL Studio a atrasar todas as faixas para compensar o atraso (PDC), gerando latência gigante mesmo com buffer baixo!'
+      }
+    ],
+    stepByStep: [
+      'Pressione F10 no teclado para abrir a janela "Settings" e selecione a aba "Audio".',
+      'No campo "Device", certifique-se de NÃO estar em "Primary Sound Driver" nem "DirectSound". Selecione o driver ASIO dedicado da sua placa.',
+      'Clique no botão "Show ASIO Panel" (ou "Buffer length") e escolha 64 ou 128 samples.',
+      'Verifique o contador "Underruns" na janela de áudio do FL Studio: ao dar Play no beat, o número deve permanecer zerado.',
+      'Vá ao canal Master no Mixer (F9) e DESLIGUE temporariamente o slot do Fruity Limiter ou qualquer plugin de masterização pesada.'
+    ],
+    proTips: [
+      'Se o seu projeto estiver pesado e com muitos sintetizadores causando estalos em 128 samples, congele ou dê "Consolidate" nos instrumentos em WAV antes da gravação.',
+      'No FL Studio, a opção "Triple buffer" pode ser desligada para economizar mais 1ms de latência, desde que sua CPU seja veloz.'
+    ],
+    fatalMistakes: [
+      'Tentar gravar com buffer em 512 ou 1024 samples: o cantor ouvirá sua voz com eco e cantará fora do ritmo (atrasado).',
+      'Gravar vocal enquanto um Maximizer ou Limiter com Lookahead está ativado no Master (introduz 20ms a 80ms de latência oculta).'
+    ]
+  },
+  {
+    id: 'input-selection',
+    title: '2. Seleção de Entrada no Mixer & Roteamento Sem Eco',
+    shortTitle: 'Seleção de Entrada & Roteamento',
+    badge: 'Mixer Routing & Input',
+    flLocation: 'FL Studio > Mixer (F9) > Canal REC IN',
+    importance: 'CRÍTICO: Garante captura Mono correta e previne duplicidade de sinal (fase)',
+    summary: 'Microfones vocais são instrumentos monofônicos (1 canal físico). A seleção de entrada errada pode gravar apenas de um lado do fone ou causar cancelamento de fase estéreo.',
+    keySettings: [
+      {
+        label: 'Tipo de Entrada (Input Selector)',
+        value: 'MONO: [In 1] ou [In 2]',
+        recommendation: 'SEMPRE selecionar entrada MONO',
+        explanation: 'Nunca selecione entrada estéreo (In 1 - In 2) para 1 microfone! Caso contrário, o áudio será gravado apenas no lado Esquerdo (Left) e você perderá metade do sinal útil.'
+      },
+      {
+        label: 'Canal Dedicado no Mixer',
+        value: 'Nomear Insert como "REC IN" ou "VOCAL TRACKING"',
+        recommendation: 'Canal exclusivo isolado do processamento pesado',
+        explanation: 'Mantém o sinal de gravação limpo e permite direcionar para múltiplos canais de audição sem afetar a tomada original gravada.'
+      },
+      {
+        label: 'Direct Monitoring vs Software Monitoring',
+        value: 'Hardware Direct Monitoring (Interface) OU FL Studio Low-Latency Send',
+        recommendation: 'Evite ouvir ambos ao mesmo tempo!',
+        explanation: 'Se a interface estiver com botão "Direct Monitor" LIGADO e o canal do FL Studio também estiver enviando para o Master, o cantor ouvirá a voz DUPLICADA com efeito de flangeador/eco.'
+      },
+      {
+        label: 'Destino de Gravação',
+        value: '"Audio, into the playlist as an audio clip"',
+        recommendation: 'Gravar direto na Playlist para fluxo contínuo de takes',
+        explanation: 'Permite visualização instantânea das ondas sonoras alinhadas no tempo do beat.'
+      }
+    ],
+    stepByStep: [
+      'Abra o Mixer (F9) e selecione uma trilha livre (ex: Insert 1). Pressione F2 e renomeie para "REC IN" (cor vermelha).',
+      'No canto superior direito do Mixer (painel de slots de efeitos), clique no menu suspenso de entrada de áudio (Input).',
+      'Na seção "Mono", selecione a entrada onde seu microfone está plugado (ex: "In 1" ou "Mic 1").',
+      'Arme o botão de gravação no topo do FL Studio (ícone de círculo vermelho) e marque "Audio, into the playlist as an audio clip".',
+      'Se você usar o botão "Direct Monitor" físico da interface: no Mixer do FL Studio, clique no ícone de cabo na parte inferior do Master para DESVINCULAR o canal "REC IN" do Master (evitando duplicação da voz).'
+    ],
+    proTips: [
+      'Para dar conforto ao cantor com Reverb sem gravar o reverb no arquivo final: envie o canal "REC IN" para um canal de envio "AUX REVERB" com Fruity Reeverb 2 em 100% Wet e Low-Cut em 300Hz.',
+      'Crie um canal de gravação limpo e salve como Preset de Mixer ("Save mixer track state as...") para reutilizar em todas as sessões futuras em 1 clique.'
+    ],
+    fatalMistakes: [
+      'Selecionar "Stereo In 1 - In 2" no microfone: resulta em arquivo estéreo com o canal direito totalmente mudo.',
+      'Deixar o monitoramento de software do FL ligado enquanto o Direct Monitor físico da interface está ativo (gera efeito de phasing horrível no fone).'
+    ]
+  },
+  {
+    id: 'pre-gain-staging',
+    title: '3. Pré-Ganho & Calibração de Entrada (Gain Staging)',
+    shortTitle: 'Pré-Ganho & Sweet Spot',
+    badge: 'Hardware Gain & Dinâmica',
+    flLocation: 'Interface Física (Knob Gain) + Mixer Meter',
+    importance: 'CRÍTICO: Evita ruído elétrico e saturação/clipping digital irreversível',
+    summary: 'Ajustar o ganho do pré-amplificador antes de gravar garante que o conversor A/D (analógico para digital) trabalhe na sua faixa de máxima fidelidade e com headroom suficiente para picos e gritos.',
+    keySettings: [
+      {
+        label: 'Faixa Sweet Spot Ideal',
+        value: 'Média de -18 dBFS a -14 dBFS com picos em -12 dBFS',
+        recommendation: 'Picos máximos jamais acima de -8 dBFS',
+        explanation: 'Em gravação digital 24-bit/32-bit float, -18 dBFS equivale ao 0 VU analógico. Oferece 18 dB de reserva para transientes sem nenhum risco de estourar.'
+      },
+      {
+        label: 'Atenuação do Beat no Mixer',
+        value: '-4 dB a -6 dB no fader do instrumental',
+        recommendation: 'Beat em -5 dB no fader',
+        explanation: 'Deixa espaço limpo para a voz sobressair no Master e permite que o cantor ouça a própria voz nitidamente sem precisar forçar o ganho do microfone.'
+      },
+      {
+        label: 'Knob de Ganho Físico vs Fader Digital',
+        value: 'Ajuste no hardware físico da interface',
+        recommendation: 'Fader do canal no FL mantido sempre em 0 dB padrão',
+        explanation: 'O fader do mixer do FL só altera o volume DEPOIS que o som já foi convertido. Se o som clipar na entrada da interface, diminuir o fader no FL apenas deixará o som distorcido mais baixo.'
+      },
+      {
+        label: 'LED Halo / Indicador de Pico da Interface',
+        value: 'Luz Verde / Âmbar leve durante os gritos',
+        recommendation: 'Nunca permitir LED Vermelho (Clip)',
+        explanation: 'A luz vermelha na interface indica que a onda analógica bateu no teto elétrico e a ponta foi decepada (distorção harmônica áspera irreversível).'
+      }
+    ],
+    stepByStep: [
+      'Peça ao vocalista para se posicionar a 15-20cm do microfone com pop filter alinhado.',
+      'Peça para ele cantar a parte mais intensa da música (ex: o refrão com voz projetada).',
+      'Gire o knob de ganho físico (Gain / Preamp) na interface de áudio enquanto observa o medidor verde do canal no FL Studio.',
+      'Ajuste o knob até que a voz fale entre -18 dBFS e -14 dBFS e, nos momentos de maior energia, alcance no máximo -12 dBFS a -10 dBFS.',
+      'Se o vocalista pedir para ouvir mais a própria voz nos fones: NUNCA aumente o ganho do pré! Aumente o volume dos fones no botão físico "Headphones" da placa ou reduza o volume do beat.'
+    ],
+    proTips: [
+      'Regra de Ouro do Engenheiro: "Headphones Knob é para o Cantor; Preamp Gain é para o Conversor".',
+      'Se o cantor for muito dinâmico (vai de sussurro a grito), ensine-o a afastar o corpo 5 a 10cm do microfone durante os gritos (microfone technique).'
+    ],
+    fatalMistakes: [
+      'Aumentar o ganho do microfone porque o cantor não está se ouvindo no fone (causa clipping imediato na primeira nota alta).',
+      'Tentar gravar colado em 0 dBFS como se fazia em fitas analógicas antigas (no digital, 0 dBFS gera distorção digital horrível).'
+    ]
+  }
+];
+

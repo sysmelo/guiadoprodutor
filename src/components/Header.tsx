@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationTab, Project } from '../types';
-import { Activity, Clock, Sliders, AudioWaveform, Disc3, ShieldCheck, Keyboard } from 'lucide-react';
+import { Activity, Clock, Sliders, AudioWaveform, Disc3, ShieldCheck, Keyboard, Github } from 'lucide-react';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -10,6 +10,7 @@ interface HeaderProps {
   onOpenAnalyzer: () => void;
   onOpenDelayCalc: () => void;
   onOpenShortcuts?: () => void;
+  onOpenGitHubExport?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -19,7 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectProject,
   onOpenAnalyzer,
   onOpenDelayCalc,
-  onOpenShortcuts
+  onOpenShortcuts,
+  onOpenGitHubExport
 }) => {
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-[#15191E] border-b border-[#2A2F36] shrink-0 select-none z-20">
@@ -76,6 +78,16 @@ export const Header: React.FC<HeaderProps> = ({
             <Clock className="w-3.5 h-3.5 text-orange-400" />
             <span>Delay Calc</span>
           </button>
+          {onOpenGitHubExport && (
+            <button
+              onClick={onOpenGitHubExport}
+              className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-cyan-500/40 hover:border-cyan-400 text-xs transition-colors cursor-pointer"
+              title="Preparar e Exportar para GitHub"
+            >
+              <Github className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="hidden xl:inline">GitHub</span>
+            </button>
+          )}
         </div>
 
         {/* Project Selector / Info */}

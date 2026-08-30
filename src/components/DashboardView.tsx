@@ -1,11 +1,33 @@
 import React from 'react';
-import { Sliders, Flame, Share2, ArrowRight, Mic, Music, Stethoscope, Activity, CheckCircle2, ShieldAlert, Sparkles, FolderKanban, Zap, Radio } from 'lucide-react';
-import { NavigationTab, Project } from '../types';
-import { mixDoctorAlertsData } from '../data/mixDoctorData';
+import { 
+  Sliders, 
+  Flame, 
+  Share2, 
+  ArrowRight, 
+  Mic, 
+  Music, 
+  Stethoscope, 
+  Activity, 
+  CheckCircle2, 
+  ShieldAlert, 
+  Sparkles, 
+  FolderKanban, 
+  Zap, 
+  Radio, 
+  Calendar,
+  AlertTriangle,
+  Clock,
+  Disc3,
+  Layers
+} from 'lucide-react';
+import { NavigationTab, Project, ProcessLevel } from '../types';
+import { getProjectDeadlineStatus } from '../utils/audioCalculator';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavigationTab) => void;
   activeProject: Project | null;
+  projects?: Project[];
+  onSelectProject?: (id: string) => void;
   onOpenAnalyzer: () => void;
   onOpenDelayCalc: () => void;
 }
@@ -13,11 +35,163 @@ interface DashboardViewProps {
 export const DashboardView: React.FC<DashboardViewProps> = ({
   onNavigate,
   activeProject,
+  projects = [],
+  onSelectProject,
   onOpenAnalyzer,
   onOpenDelayCalc
 }) => {
+  const activeDeadlineStatus = activeProject ? getProjectDeadlineStatus(activeProject.deadline, activeProject.status) : null;
+  const activeProcessLevel: ProcessLevel = activeProject?.processLevel || (
+    activeProject?.status === 'Finalizado' ? 'Nível 4: Finalização / Entrega' :
+    activeProject?.status === 'Em Master' ? 'Nível 3: Masterização' :
+    'Nível 2: Mixagem'
+  );
+
+  const overdueList = projects.filter(p => {
+    const s = getProjectDeadlineStatus(p.deadline, p.status);
+    return s.isOverdue && p.status !== 'Finalizado';
+  });
+
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+      
+      {/* CRITICAL OVERDUE ALERT BANNER (If any project is overdue) */}
+      {overdueList.length > 0 && (
+        <div className="p-4 rounded-xl bg-red-500/10 border-2 border-red-500/40 text-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-red-500 text-black flex items-center justify-center font-bold shrink-0">
+              <AlertTriangle className="w-5 h-5" />
+            </div>
+            <div>
+              <h4 className="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                Atenção: {overdueList.length} {overdueList.length === 1 ? 'Projeto com Prazo Vencido' : 'Projetos com Prazos Vencidos'}!
+              </h4>
+              <p className="text-[11px] text-red-300">
+                Faixa(s): {overdueList.map(p => `"${p.name}" (${p.artist})`).join(', ')}. Verifique o painel de projetos para priorizar as entregas.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => onNavigate('projects')}
+            className="px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-bold font-mono shrink-0 transition-colors cursor-pointer"
+          >
+            Ver Projetos Atrasados →
+          </button>
+        </div>
+      )}
+
+      {/* ACTIVE PROJECT PROCESS PIPELINE MONITOR */}
+      {activeProject && (
+        <div className="rounded-2xl bg-[#15191E] border border-cyan-500/40 p-5 md:p-6 shadow-xl space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2F36] pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                <FolderKanban className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    SESSÃO ATIVA NO ESTÚDIO
+                  </span>
+                  {activeDeadlineStatus && (
+                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${activeDeadlineStatus.badgeColor}`}>
+                      {activeDeadlineStatus.label}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-lg md:text-xl font-extrabold text-white mt-0.5">
+                  {activeProject.name} — <span className="text-gray-400 font-normal text-sm">{activeProject.artist}</span>
+                </h3>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onNavigate('projects')}
+                className="px-3 py-1.5 rounded-lg bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 text-xs font-semibold border border-[#2A2F36] transition-colors cursor-pointer flex items-center gap-1.5"
+              >
+                <span>Trocar Sessão</span>
+                <ArrowRight className="w-3.5 h-3.5 text-cyan-400" />
+              </button>
+            </div>
+          </div>
+
+          {/* 4-Stage Process Progress Deck */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-gray-400">Pipeline de Produção do Projeto:</span>
+              <span className="text-cyan-400 font-bold">{activeProcessLevel}</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+              {[
+                { 
+                  id: 'Nível 1: Gravação / Pré-Mix', 
+                  label: '1. Pré-Mix & Gravação', 
+                  tab: 'vocal_recording' as NavigationTab,
+                  desc: 'Buffer ASIO, Ganho -18dB',
+                  icon: Radio,
+                  color: 'cyan'
+                },
+                { 
+                  id: 'Nível 2: Mixagem', 
+                  label: '2. Mixagem de Canais', 
+                  tab: 'mix' as NavigationTab,
+                  desc: 'EQs, Dinâmica, 15 Gêneros',
+                  icon: Sliders,
+                  color: 'blue'
+                },
+                { 
+                  id: 'Nível 3: Masterização', 
+                  label: '3. Masterização & LUFS', 
+                  tab: 'master' as NavigationTab,
+                  desc: 'True Peak, Loudness, Chain',
+                  icon: Disc3,
+                  color: 'orange'
+                },
+                { 
+                  id: 'Nível 4: Finalização / Entrega', 
+                  label: '4. Finalização & Entrega', 
+                  tab: 'export' as NavigationTab,
+                  desc: 'WAV 24b, Stems, Streaming',
+                  icon: Share2,
+                  color: 'emerald'
+                }
+              ].map((stage, idx) => {
+                const isCurrent = activeProcessLevel === stage.id;
+                const Icon = stage.icon;
+                return (
+                  <button
+                    key={stage.id}
+                    onClick={() => onNavigate(stage.tab)}
+                    className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between space-y-1.5 ${
+                      isCurrent
+                        ? 'bg-cyan-500/15 border-cyan-500 ring-1 ring-cyan-500/40 shadow-lg'
+                        : 'bg-[#0B0E11] border-[#242A34] hover:border-gray-600 hover:bg-[#101419]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-mono font-black ${isCurrent ? 'text-cyan-400' : 'text-gray-500'}`}>
+                        0{idx + 1}
+                      </span>
+                      <Icon className={`w-3.5 h-3.5 ${isCurrent ? 'text-cyan-400 animate-pulse' : 'text-gray-600'}`} />
+                    </div>
+                    <div>
+                      <h5 className={`text-xs font-bold ${isCurrent ? 'text-white' : 'text-gray-300'}`}>
+                        {stage.label}
+                      </h5>
+                      <p className="text-[10px] text-gray-500 leading-tight mt-0.5">
+                        {stage.desc}
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* NEW PRO FEATURE BANNER: VOCAL RECORDING WORKFLOW */}
       <div className="rounded-xl bg-gradient-to-r from-[#15191E] via-[#1A222D] to-[#15191E] border border-cyan-500/30 p-5 md:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
         <div className="space-y-2 z-10 max-w-2xl">
@@ -32,7 +206,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             Manual de Gravação de Vocal no FL Studio
           </h2>
           <p className="text-xs text-gray-300 leading-relaxed">
-            Aprenda a calibrar buffer/latência zero (ASIO), ganho de microfone (-18dBFS sweet spot), roteamento REC IN, headphone mix com reverb de conforto, comping e consolidação rápida (Ctrl+Alt+C).
+            Aprenda a calibrar buffer/latência zero (ASIO), ganho de microfone (-18dBFS sweet spot), console virtual de gravação, roteamento REC IN, headphone mix com reverb de conforto, comping e consolidação rápida.
           </p>
         </div>
 
@@ -41,44 +215,88 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             onClick={() => onNavigate('vocal_recording')}
             className="px-4 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] cursor-pointer"
           >
-            <span>Abrir Guia de Gravação</span>
+            <span>Abrir Console & Guia</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      {/* 3 Core Big Action Cards (As in Sleek Interface) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* CARD 1: MIX */}
-        <div className="bg-[#15191E] border border-[#2A2F36] rounded-xl p-5 flex flex-col justify-between relative overflow-hidden group hover:border-cyan-500/50 transition-all shadow-lg">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-15 transition-opacity text-cyan-400">
-            <Sliders className="w-24 h-24" />
+      {/* 4 Core Action Cards (Level 1 to Level 4 Workflow) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* CARD 1: GRAVAÇÃO & TRACKING (NÍVEL 1) */}
+        <div className="bg-[#15191E] border border-cyan-500/40 rounded-xl p-5 flex flex-col justify-between relative overflow-hidden group hover:border-cyan-400 transition-all shadow-lg">
+          <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-15 transition-opacity text-cyan-400">
+            <Radio className="w-20 h-20" />
           </div>
 
           <div className="space-y-3 z-10">
             <div className="flex items-center justify-between">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400">
-                <Sliders className="w-5 h-5" />
+                <Radio className="w-5 h-5" />
               </div>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#0B0E11] text-cyan-400 border border-[#2A2F36]">
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
                 NÍVEL 1
               </span>
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">MIX</h3>
-              <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Organize, limpe e equilibre todos os elementos da sua música com ganho correto e buses.
+              <h3 className="text-base font-bold text-white tracking-tight">GRAVAÇÃO</h3>
+              <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Buffer ASIO (64/128smp), entrada Mono, ganho (-18dBFS) e latência zero no FL Studio.
               </p>
             </div>
 
             <div className="space-y-1 pt-2 border-t border-[#2A2F36] text-[11px] text-gray-400">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                <span>Gain Staging (-18 a -12 dBFS)</span>
+                <span>Console Virtual & VU Meter</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                <span>Entrada Mono & Pré-Ganho</span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => onNavigate('vocal_recording')}
+            className="mt-4 w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.3)] z-10"
+          >
+            <span>Configurar Gravação</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        {/* CARD 2: MIX (NÍVEL 2) */}
+        <div className="bg-[#15191E] border border-[#2A2F36] rounded-xl p-5 flex flex-col justify-between relative overflow-hidden group hover:border-blue-500/50 transition-all shadow-lg">
+          <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-15 transition-opacity text-blue-400">
+            <Sliders className="w-20 h-20" />
+          </div>
+
+          <div className="space-y-3 z-10">
+            <div className="flex items-center justify-between">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400">
+                <Sliders className="w-5 h-5" />
+              </div>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#0B0E11] text-blue-400 border border-[#2A2F36]">
+                NÍVEL 2
+              </span>
+            </div>
+
+            <div>
+              <h3 className="text-base font-bold text-white tracking-tight">MIX & PREPARAÇÃO</h3>
+              <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Organize, limpe e equilibre todos os instrumentos com ganho correto, EQs e buses.
+              </p>
+            </div>
+
+            <div className="space-y-1 pt-2 border-t border-[#2A2F36] text-[11px] text-gray-400">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                <span>Gain Staging (-18 a -12 dBFS)</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
                 <span>Kick, 808, Voz, Synths & Guitarras</span>
               </div>
             </div>
@@ -86,17 +304,17 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => onNavigate('mix')}
-            className="mt-5 w-full py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.3)] z-10"
+            className="mt-4 w-full py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(59,130,246,0.3)] z-10"
           >
             <span>Começar Mix</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* CARD 2: MASTER */}
+        {/* CARD 3: MASTER (NÍVEL 3) */}
         <div className="bg-[#15191E] border border-[#2A2F36] rounded-xl p-5 flex flex-col justify-between relative overflow-hidden group hover:border-orange-500/50 transition-all shadow-lg">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-15 transition-opacity text-orange-400">
-            <Flame className="w-24 h-24" />
+          <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-15 transition-opacity text-orange-400">
+            <Flame className="w-20 h-20" />
           </div>
 
           <div className="space-y-3 z-10">
@@ -105,42 +323,42 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Flame className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#0B0E11] text-orange-400 border border-[#2A2F36]">
-                NÍVEL 2
+                NÍVEL 3
               </span>
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">MASTER</h3>
-              <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Alcance impacto, equilíbrio espectral e volume comercial de pico sem distorção indesejada.
+              <h3 className="text-base font-bold text-white tracking-tight">MASTER SUITE</h3>
+              <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Alcance impacto, equilíbrio espectral e volume comercial sem distorção indesejada.
               </p>
             </div>
 
             <div className="space-y-1 pt-2 border-t border-[#2A2F36] text-[11px] text-gray-400">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                <span>Cadeia de 8 Etapas no Master Bus</span>
+                <span>Cadeia de 8 Etapas no Master</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-orange-400 shrink-0" />
-                <span>Medidores LUFS, True Peak e Correlação</span>
+                <span>Medidores LUFS, True Peak e Fase</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => onNavigate('master')}
-            className="mt-5 w-full py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(249,115,22,0.3)] z-10"
+            className="mt-4 w-full py-2 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(249,115,22,0.3)] z-10"
           >
             <span>Começar Master</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* CARD 3: EXPORT */}
+        {/* CARD 4: EXPORT (NÍVEL 4) */}
         <div className="bg-[#15191E] border border-[#2A2F36] rounded-xl p-5 flex flex-col justify-between relative overflow-hidden group hover:border-emerald-500/50 transition-all shadow-lg">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-15 transition-opacity text-emerald-400">
-            <Share2 className="w-24 h-24" />
+          <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-15 transition-opacity text-emerald-400">
+            <Share2 className="w-20 h-20" />
           </div>
 
           <div className="space-y-3 z-10">
@@ -149,40 +367,40 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                 <Share2 className="w-5 h-5" />
               </div>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#0B0E11] text-emerald-400 border border-[#2A2F36]">
-                NÍVEL 3
+                NÍVEL 4
               </span>
             </div>
 
             <div>
-              <h3 className="text-lg font-bold text-white tracking-tight">EXPORT</h3>
-              <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                Escolha as configurações ideais para entregar seu trabalho final para Spotify, Apple ou Stems.
+              <h3 className="text-base font-bold text-white tracking-tight">EXPORT & ENTREGA</h3>
+              <p className="text-[11px] text-gray-400 mt-1 leading-relaxed">
+                Checklist final e renderização correta (WAV 24-bit, 512-point sinc) para streaming.
               </p>
             </div>
 
             <div className="space-y-1 pt-2 border-t border-[#2A2F36] text-[11px] text-gray-400">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Resampling 512-point sinc & Dither</span>
+                <span>Spotify, Apple Music, Club WAV</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                <span>Checklist de Aprovação em 10 Pontos</span>
+                <span>Exportação de Stems e Dithering</span>
               </div>
             </div>
           </div>
 
           <button
             onClick={() => onNavigate('export')}
-            className="mt-5 w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.3)] z-10"
+            className="mt-4 w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_12px_rgba(16,185,129,0.3)] z-10"
           >
             <span>Exportar Guia</span>
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
-      {/* VOCAL CLEANING STUDIO + SUGGESTED SIGNAL FLOW (Matching Sleek Interface Architecture) */}
+      {/* VOCAL CLEANING STUDIO + SUGGESTED SIGNAL FLOW */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left: Vocal Cleaning Quick Diagnostic */}
         <section className="lg:col-span-7 bg-[#15191E] border border-[#2A2F36] rounded-xl p-5 md:p-6 flex flex-col justify-between shadow-lg">
@@ -204,37 +422,37 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div className="grid grid-cols-2 gap-2">
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors"
+                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors cursor-pointer"
               >
                 Muito Ruído (Noise/Hum)
               </button>
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-200 text-xs font-semibold hover:bg-cyan-500/20 transition-colors shadow-[0_0_8px_rgba(6,182,212,0.15)]"
+                className="text-left px-3 py-2 rounded-lg border border-cyan-500 bg-cyan-500/10 text-cyan-200 text-xs font-semibold hover:bg-cyan-500/20 transition-colors shadow-[0_0_8px_rgba(6,182,212,0.15)] cursor-pointer"
               >
                 Sibilância Excessiva (S, Sh)
               </button>
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors"
+                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors cursor-pointer"
               >
                 Voz Abafada / Escura
               </button>
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors"
+                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors cursor-pointer"
               >
                 Volume Inconsistente
               </button>
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors"
+                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors cursor-pointer"
               >
                 Ressonância Nasal (Boxy)
               </button>
               <button 
                 onClick={() => onNavigate('vocal_cleaning')}
-                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors"
+                className="text-left px-3 py-2 rounded-lg border border-[#2A2F36] bg-[#0B0E11] text-xs text-gray-300 hover:border-cyan-500/50 hover:text-white transition-colors cursor-pointer"
               >
                 Falta de Presença / Air
               </button>
@@ -256,7 +474,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="text-xs text-gray-500 font-medium">Guia completo para vozes limpas</span>
             <button
               onClick={() => onNavigate('vocal_cleaning')}
-              className="text-xs text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1"
+              className="text-xs text-cyan-400 hover:text-cyan-300 font-bold flex items-center gap-1 cursor-pointer"
             >
               <span>Abrir Vocal Cleaning</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -324,7 +542,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <button
             onClick={() => onNavigate('plugins')}
-            className="mt-3 w-full py-2 bg-[#1E2329] hover:bg-[#252B33] text-gray-300 hover:text-white rounded-lg text-xs font-semibold border border-[#2A2F36] transition-colors"
+            className="mt-3 w-full py-2 bg-[#1E2329] hover:bg-[#252B33] text-gray-300 hover:text-white rounded-lg text-xs font-semibold border border-[#2A2F36] transition-colors cursor-pointer"
           >
             Ver Plugins FL Studio & Suítes →
           </button>
@@ -384,4 +602,3 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
     </div>
   );
 };
-

@@ -14,6 +14,14 @@ export type NavigationTab =
 
 export type ProjectStatus = 'Em Mixagem' | 'Em Revisão' | 'Em Master' | 'Finalizado';
 
+export type ProcessLevel = 
+  | 'Nível 1: Gravação / Pré-Mix'
+  | 'Nível 2: Mixagem'
+  | 'Nível 3: Masterização'
+  | 'Nível 4: Finalização / Entrega';
+
+export type ProjectPriority = 'Baixa' | 'Normal' | 'Alta' | 'Urgente';
+
 export interface Project {
   id: string;
   name: string;
@@ -22,6 +30,9 @@ export interface Project {
   bpm: number;
   key: string;
   date: string;
+  deadline?: string; // YYYY-MM-DD
+  priority?: ProjectPriority;
+  processLevel?: ProcessLevel;
   status: ProjectStatus;
   notes: string;
   checklist: {
@@ -33,6 +44,8 @@ export interface Project {
   };
   exportNotes?: string;
   referenceTracks?: string;
+  clientContact?: string;
+  deliveryFormat?: string;
 }
 
 export type PluginType = 'FL Native' | 'FabFilter' | 'Free External' | 'Other External';

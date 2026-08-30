@@ -20,11 +20,18 @@ import {
   Settings,
   ShieldCheck,
   Music,
-  Maximize2
+  Maximize2,
+  Cpu,
+  HelpCircle,
+  Check,
+  SlidersHorizontal,
+  FolderLock
 } from 'lucide-react';
 import { NavigationTab, Project } from '../types';
+import { VirtualRecordingConsole } from './VirtualRecordingConsole';
 import {
   recordingPhasesData,
+  recSetupPillarsData,
   micSetupGuides,
   latencyReferenceTable,
   vocalTrackArrangement
@@ -42,7 +49,9 @@ export const VocalRecordingView: React.FC<VocalRecordingViewProps> = ({
   onOpenAnalyzer
 }) => {
   const [selectedPhaseId, setSelectedPhaseId] = useState<string>(recordingPhasesData[0].id);
-  const [activeTabMode, setActiveTabMode] = useState<'phases' | 'latency_calc' | 'gain_stage' | 'mic_guide' | 'arrangement' | 'checklist'>('phases');
+  const [selectedPillarId, setSelectedPillarId] = useState<string>(recSetupPillarsData[0].id);
+  const [selectedScenario, setSelectedScenario] = useState<'direct_monitor' | 'software_monitor' | 'low_cpu'>('software_monitor');
+  const [activeTabMode, setActiveTabMode] = useState<'rec_setup' | 'phases' | 'latency_calc' | 'gain_stage' | 'mic_guide' | 'arrangement' | 'checklist'>('rec_setup');
 
   // Interactive Latency Calculator States
   const [calcSampleRate, setCalcSampleRate] = useState<number>(48000);
@@ -173,6 +182,7 @@ export const VocalRecordingView: React.FC<VocalRecordingViewProps> = ({
       {/* Module Navigation Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-thin">
         {[
+          { id: 'rec_setup', label: 'Configuração de Gravação', icon: SlidersHorizontal, badge: 'NÍVEL 1' },
           { id: 'phases', label: '7 Fases do Fluxo FL Studio', icon: Layers, badge: 'Passo a Passo' },
           { id: 'latency_calc', label: 'Calculadora de Latência / Buffer', icon: Zap },
           { id: 'gain_stage', label: 'Simulador de Ganho (Gain Staging)', icon: Sliders },
@@ -205,6 +215,385 @@ export const VocalRecordingView: React.FC<VocalRecordingViewProps> = ({
           );
         })}
       </div>
+
+      {/* MODE 0: NÍVEL 1 - CONFIGURAÇÃO DE GRAVAÇÃO NO FL STUDIO */}
+      {activeTabMode === 'rec_setup' && (
+        <div className="space-y-6">
+          {/* Virtual Hardware Console Strip (Level 1 Tracking Station) */}
+          <VirtualRecordingConsole
+            activeProject={activeProject}
+            onNavigateToCleaning={() => onNavigate('vocal_cleaning')}
+          />
+
+          {/* Header Banner Nível 1 */}
+          <div className="rounded-xl bg-gradient-to-r from-[#15191E] via-[#16202A] to-[#15191E] border border-cyan-500/40 p-6 shadow-xl relative overflow-hidden space-y-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="space-y-1.5 max-w-3xl">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono font-extrabold px-2.5 py-0.5 rounded-full bg-cyan-500 text-black shadow-[0_0_10px_rgba(6,182,212,0.5)] flex items-center gap-1">
+                    <Radio className="w-3 h-3 text-black animate-pulse" />
+                    NÍVEL 1
+                  </span>
+                  <span className="text-xs font-mono text-cyan-300 font-bold">
+                    FL STUDIO RECORDING ENGINE & ZERO LATENCY
+                  </span>
+                </div>
+                <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                  Configuração de Gravação: Buffer, Entrada & Pré-Ganho
+                </h2>
+                <p className="text-xs md:text-sm text-gray-300 leading-relaxed">
+                  O Nível 1 é a fundação obrigatória antes de cantar. Ajuste o Buffer ASIO para latência zero (&lt; 3ms), selecione a entrada Mono correta no Mixer para evitar eco/cancelamento de fase e calibre o pré-ganho físico no sweet spot de -18 dBFS.
+                </p>
+              </div>
+
+              {/* Quick Action Navigation */}
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  onClick={() => setActiveTabMode('latency_calc')}
+                  className="px-3.5 py-2 rounded-lg bg-[#0B0E11] hover:bg-[#1E2329] text-cyan-400 border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Zap className="w-3.5 h-3.5" />
+                  <span>Calc de Latência</span>
+                </button>
+                <button
+                  onClick={() => setActiveTabMode('gain_stage')}
+                  className="px-3.5 py-2 rounded-lg bg-[#0B0E11] hover:bg-[#1E2329] text-cyan-400 border border-cyan-500/30 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Simulador de Ganho</span>
+                </button>
+              </div>
+            </div>
+
+            {/* 3 Pillar Quick Cards Selector */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+              {recSetupPillarsData.map((pillar, idx) => {
+                const isSelected = pillar.id === selectedPillarId;
+                return (
+                  <div
+                    key={pillar.id}
+                    onClick={() => setSelectedPillarId(pillar.id)}
+                    className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between space-y-3 ${
+                      isSelected
+                        ? 'bg-[#181E27] border-cyan-400 ring-2 ring-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
+                        : 'bg-[#0B0E11] border-[#2A2F36] hover:border-gray-600 hover:bg-[#12161C]'
+                    }`}
+                  >
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                          isSelected ? 'bg-cyan-500 text-black' : 'bg-[#15191E] text-gray-400 border border-[#2A2F36]'
+                        }`}>
+                          PILAR {idx + 1}
+                        </span>
+                        <span className="text-[10px] font-mono text-cyan-400 font-bold">{pillar.badge}</span>
+                      </div>
+                      <h3 className="text-sm font-bold text-white">{pillar.shortTitle}</h3>
+                      <p className="text-[11px] text-gray-400 leading-relaxed line-clamp-2">
+                        {pillar.summary}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-[#1E2329] text-[10px] text-gray-400">
+                      <span className="font-mono">{pillar.flLocation.split('>')[0]}</span>
+                      <span className={`font-bold flex items-center gap-1 ${isSelected ? 'text-cyan-400' : 'text-gray-500'}`}>
+                        {isSelected ? 'Explorando' : 'Ver Detalhes'}
+                        <ArrowRight className="w-3 h-3" />
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Selected Pillar Comprehensive Exploration */}
+          {(() => {
+            const currentPillar = recSetupPillarsData.find(p => p.id === selectedPillarId) || recSetupPillarsData[0];
+            return (
+              <div className="space-y-6 animate-in fade-in duration-150">
+                {/* Pillar Header Card */}
+                <div className="rounded-xl bg-[#15191E] border border-[#2A2F36] p-6 shadow-lg space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-[#2A2F36] pb-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-0.5 rounded border border-cyan-500/30">
+                          {currentPillar.badge}
+                        </span>
+                        <span className="text-xs font-mono text-gray-400">
+                          Local no FL: <strong className="text-white">{currentPillar.flLocation}</strong>
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-extrabold text-white">{currentPillar.title}</h3>
+                      <p className="text-xs text-amber-400 font-mono flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                        {currentPillar.importance}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 4 Technical Key Parameters Grid */}
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                      <SlidersHorizontal className="w-3.5 h-3.5 text-cyan-400" />
+                      Parâmetros Críticos de Configuração no FL Studio
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {currentPillar.keySettings.map((setting, sIdx) => (
+                        <div key={sIdx} className="rounded-xl bg-[#0B0E11] border border-[#2A2F36] p-4.5 space-y-2.5">
+                          <div className="flex items-start justify-between gap-2">
+                            <span className="text-xs font-bold text-white">{setting.label}</span>
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 shrink-0">
+                              {setting.recommendation}
+                            </span>
+                          </div>
+                          <div className="p-2.5 rounded-lg bg-[#15191E] border border-[#1E2329] text-xs font-mono text-cyan-400 font-bold">
+                            {setting.value}
+                          </div>
+                          <p className="text-xs text-gray-400 leading-relaxed">
+                            {setting.explanation}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Step-by-Step Configuration Steps */}
+                  <div className="space-y-3 pt-2">
+                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-gray-400 flex items-center gap-2">
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      Como Configurar no FL Studio Passo a Passo
+                    </h4>
+                    <div className="space-y-2">
+                      {currentPillar.stepByStep.map((stepText, idx) => (
+                        <div key={idx} className="flex items-start gap-3 p-3.5 rounded-lg bg-[#0B0E11] border border-[#2A2F36]">
+                          <div className="w-5 h-5 rounded bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5">
+                            {idx + 1}
+                          </div>
+                          <p className="text-xs text-gray-200 leading-relaxed font-medium">
+                            {stepText}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Pro Tips & Fatal Mistakes Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    {/* Pro Tips */}
+                    <div className="p-4.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2.5">
+                      <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Dicas Pro de Engenheiro (Melhores Práticas)</span>
+                      </div>
+                      <ul className="space-y-2 text-xs text-gray-300">
+                        {currentPillar.proTips.map((tip, tIdx) => (
+                          <li key={tIdx} className="flex items-start gap-2">
+                            <span className="text-emerald-400 font-bold">•</span>
+                            <span>{tip}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Fatal Mistakes */}
+                    <div className="p-4.5 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2.5">
+                      <div className="flex items-center gap-2 text-xs font-bold text-red-400">
+                        <AlertTriangle className="w-4 h-4" />
+                        <span>Erros Graves que Arruinam a Gravação</span>
+                      </div>
+                      <ul className="space-y-2 text-xs text-gray-300">
+                        {currentPillar.fatalMistakes.map((mistake, mIdx) => (
+                          <li key={mIdx} className="flex items-start gap-2">
+                            <span className="text-red-400 font-bold">•</span>
+                            <span>{mistake}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          {/* Interactive Studio Scenario Assistant (Direct Monitor vs Software Monitor vs Low-End PC) */}
+          <div className="rounded-xl bg-[#15191E] border border-[#2A2F36] p-6 shadow-lg space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2F36] pb-4">
+              <div className="space-y-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-mono font-bold">
+                  <Headphones className="w-3.5 h-3.5" />
+                  ROTEAMENTO DE SESSÃO REAL
+                </div>
+                <h3 className="text-lg font-bold text-white">
+                  Escolha o Seu Cenário de Gravação no FL Studio
+                </h3>
+                <p className="text-xs text-gray-400">
+                  Veja exatamente como ligar os cabos, calibrar o buffer e desativar o eco para a sua configuração de hardware.
+                </p>
+              </div>
+
+              {/* Scenario Toggles */}
+              <div className="flex items-center gap-1.5 p-1 bg-[#0B0E11] rounded-lg border border-[#2A2F36] shrink-0">
+                <button
+                  onClick={() => setSelectedScenario('software_monitor')}
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
+                    selectedScenario === 'software_monitor'
+                      ? 'bg-cyan-500 text-black shadow-md'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Software FX (Auto-Tune)
+                </button>
+                <button
+                  onClick={() => setSelectedScenario('direct_monitor')}
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
+                    selectedScenario === 'direct_monitor'
+                      ? 'bg-cyan-500 text-black shadow-md'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  Direct Monitor (Placa)
+                </button>
+                <button
+                  onClick={() => setSelectedScenario('low_cpu')}
+                  className={`px-3 py-1.5 rounded text-xs font-bold transition-all cursor-pointer ${
+                    selectedScenario === 'low_cpu'
+                      ? 'bg-cyan-500 text-black shadow-md'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  PC Básico / Sem Estalos
+                </button>
+              </div>
+            </div>
+
+            {/* Scenario Detailed Cards */}
+            {selectedScenario === 'software_monitor' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in">
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-cyan-400">1. Buffer & Driver</span>
+                    <span className="text-[10px] font-mono bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">F10 Audio</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Selecione <strong>ASIO da Interface</strong> com Buffer em <strong>64 ou 128 samples</strong> (latência entre 1.3ms e 2.7ms). Desative o "Triple Buffer" para resposta instantânea.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-cyan-400">2. Roteamento no Mixer</span>
+                    <span className="text-[10px] font-mono bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">F9 Mixer</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Selecione <strong>Mono In 1</strong> no canal REC IN. Envie um cabo auxiliar (Send) para o canal de <strong>Reverb/Pitcher</strong> em 100% Wet. A gravação principal permanece 100% Dry.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-cyan-400">3. Anti-Eco & Hardware</span>
+                    <span className="text-[10px] font-mono bg-cyan-500/20 text-cyan-300 px-1.5 py-0.5 rounded">Interface Física</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    <strong>DESLIGUE o botão "Direct Monitor"</strong> na sua placa de som física! Como você está ouvindo pelo FL Studio, ligar o Direct Monitor geraria voz dupla com phasing.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {selectedScenario === 'direct_monitor' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in">
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-400">1. Latência Absoluta Zero</span>
+                    <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">0.0 ms Real</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    <strong>LIGUE o botão "Direct Monitor"</strong> na interface física. O sinal do microfone vai direto para o fone sem passar pelo Windows ou pelo processador do computador.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-400">2. Desvincular no Mixer</span>
+                    <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">Mixer F9</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    No canal "REC IN" do FL Studio, <strong>DESCONECTE o envio para o Master</strong> (clique na seta verde na base do Master). O FL grava o áudio na Playlist sem reproduzir no fone.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-400">3. Vantagem & Estabilidade</span>
+                    <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded">CPU 0%</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Você pode usar qualquer tamanho de buffer (até 512 samples) sem nenhum eco na voz, pois a monitoração é 100% analógica no hardware.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {selectedScenario === 'low_cpu' && (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 animate-in fade-in">
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-400">1. Congelar Beat em WAV</span>
+                    <span className="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">Ctrl + Alt + C</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Dê "Quick render as audio clip" nos VSTs pesados (Serum, Kontakt, Omnisphere). Ter o beat como um único arquivo WAV libera 90% da sua CPU para gravação.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-400">2. FL Studio ASIO & Safe</span>
+                    <span className="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">Buffer 128/256</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Use 128 samples com "Triple Buffer" ativado se sua CPU engasgar. Monitore a caixa "Underruns" para garantir que nenhum estalo entre no take gravado.
+                  </p>
+                </div>
+
+                <div className="p-4.5 rounded-xl bg-[#0B0E11] border border-[#2A2F36] space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-400">3. Master 100% Desativado</span>
+                    <span className="text-[10px] font-mono bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded">PDC 0ms</span>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    Desative todos os slots de efeitos no canal Master do Mixer. Nunca grave com limitadores ou compressores pesados de masterização ligados.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Quick 4 Golden Rules Summary Card */}
+          <div className="rounded-xl bg-[#15191E] border border-cyan-500/30 p-5 shadow-lg flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="space-y-1">
+              <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-cyan-400" />
+                As 4 Leis do Nível 1 para Gravação Perfeita no FL Studio
+              </h4>
+              <p className="text-xs text-gray-400">
+                1. Buffer ≤ 128 samples • 2. Entrada Mono (In 1) • 3. Ganho no Sweet Spot (-18 dBFS) • 4. Master sem plugins de latência.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setActiveTabMode('phases')}
+              className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs flex items-center gap-2 transition-all shadow-md cursor-pointer shrink-0"
+            >
+              <span>Ver as 7 Fases do Fluxo</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* MODE 1: 7 PHASES STEP-BY-STEP WORKFLOW */}
       {activeTabMode === 'phases' && (
