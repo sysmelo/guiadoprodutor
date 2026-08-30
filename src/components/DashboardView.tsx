@@ -18,7 +18,8 @@ import {
   AlertTriangle,
   Clock,
   Disc3,
-  Layers
+  Layers,
+  Waves
 } from 'lucide-react';
 import { NavigationTab, Project, ProcessLevel } from '../types';
 import { getProjectDeadlineStatus } from '../utils/audioCalculator';
@@ -192,32 +193,66 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       )}
 
-      {/* NEW PRO FEATURE BANNER: VOCAL RECORDING WORKFLOW */}
-      <div className="rounded-xl bg-gradient-to-r from-[#15191E] via-[#1A222D] to-[#15191E] border border-cyan-500/30 p-5 md:p-6 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5 relative overflow-hidden">
-        <div className="space-y-2 z-10 max-w-2xl">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5">
-              <Radio className="w-3 h-3 text-cyan-400 animate-pulse" />
-              FL STUDIO SUITE COMPLETA
-            </span>
-            <span className="text-[10px] font-mono text-gray-400">Desde a Criação do Beat até a Gravação do Vocal</span>
+      {/* PRO WORKFLOW BANNERS: FL STUDIO & STUDIO ONE 7 SUITES */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Banner 1: FL Studio Vocal Recording & Suite */}
+        <div className="rounded-xl bg-gradient-to-br from-[#15191E] via-[#1A222D] to-[#15191E] border border-cyan-500/30 p-5 shadow-xl flex flex-col justify-between space-y-4 relative overflow-hidden">
+          <div className="space-y-2 z-10">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1.5">
+                <Radio className="w-3 h-3 text-cyan-400" />
+                FL STUDIO
+              </span>
+              <span className="text-[10px] font-mono text-gray-400">Gravação de Vocal & Beat</span>
+            </div>
+            <h3 className="text-base font-black text-white tracking-tight">
+              Manual de Gravação no FL Studio
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              Calibração de buffer ASIO, ganho (-18dBFS), console virtual de gravação, roteamento REC IN e comping rápido.
+            </p>
           </div>
-          <h2 className="text-lg md:text-xl font-black text-white tracking-tight">
-            Manual de Gravação de Vocal no FL Studio
-          </h2>
-          <p className="text-xs text-gray-300 leading-relaxed">
-            Aprenda a calibrar buffer/latência zero (ASIO), ganho de microfone (-18dBFS sweet spot), console virtual de gravação, roteamento REC IN, headphone mix com reverb de conforto, comping e consolidação rápida.
-          </p>
+
+          <div className="flex items-center justify-between pt-2 border-t border-[#2A2F36] z-10">
+            <span className="text-[10px] font-mono text-cyan-400">Latência Zero & Reverb Conforto</span>
+            <button
+              onClick={() => onNavigate('vocal_recording')}
+              className="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+            >
+              <span>Abrir FL Studio</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0 z-10">
-          <button
-            onClick={() => onNavigate('vocal_recording')}
-            className="px-4 py-2.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black font-extrabold text-xs flex items-center gap-2 transition-all shadow-[0_0_15px_rgba(6,182,212,0.4)] cursor-pointer"
-          >
-            <span>Abrir Console & Guia</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+        {/* Banner 2: Studio One 7 Clean Workflow & Native Aux Channels */}
+        <div className="rounded-xl bg-gradient-to-br from-[#15191E] via-[#241E18] to-[#15191E] border border-orange-500/40 p-5 shadow-xl flex flex-col justify-between space-y-4 relative overflow-hidden">
+          <div className="space-y-2 z-10">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-orange-500/20 text-orange-300 border border-orange-500/40 flex items-center gap-1.5">
+                <Waves className="w-3 h-3 text-orange-400 animate-pulse" />
+                STUDIO ONE 7
+              </span>
+              <span className="text-[10px] font-mono text-amber-300 font-bold">Fluxo Limpo & Canais Auxiliares</span>
+            </div>
+            <h3 className="text-base font-black text-white tracking-tight">
+              Workflow Studio One 7 com Plugins Nativos
+            </h3>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              Estrutura sem confusão em 5 etapas + os 5 Canais Auxiliares (Sends FX) com OpenAIR, Analog Delay, Chorus Doubler e Compressão NY.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-[#2A2F36] z-10">
+            <span className="text-[10px] font-mono text-orange-400">100% Plugins Nativos PreSonus</span>
+            <button
+              onClick={() => onNavigate('studio_one')}
+              className="px-3.5 py-1.5 rounded-lg bg-orange-500 hover:bg-orange-400 text-black font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-[0_0_12px_rgba(249,115,22,0.4)] cursor-pointer"
+            >
+              <span>Abrir Studio One 7</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
       </div>
 

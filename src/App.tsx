@@ -15,6 +15,7 @@ import { MixDoctorView } from './components/MixDoctorView';
 import { ExportView } from './components/ExportView';
 import { ProjectsView } from './components/ProjectsView';
 import { SettingsOfflineView } from './components/SettingsOfflineView';
+import { StudioOneWorkflowView } from './components/StudioOneWorkflowView';
 import { AudioAnalyzerModal } from './components/AudioAnalyzerModal';
 import { DelayCalculatorModal } from './components/DelayCalculatorModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
@@ -102,6 +103,13 @@ export const App: React.FC = () => {
           case 'P':
             e.preventDefault();
             setCurrentTab('projects');
+            break;
+          case 's':
+          case 'S':
+            if (!isInput) {
+              e.preventDefault();
+              setCurrentTab('studio_one');
+            }
             break;
           case ',':
             e.preventDefault();
@@ -197,6 +205,14 @@ export const App: React.FC = () => {
               activeProject={activeProject}
               projects={projects}
               onSelectProject={handleSelectProject}
+              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+              onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
+            />
+          )}
+
+          {currentTab === 'studio_one' && (
+            <StudioOneWorkflowView
+              onNavigate={setCurrentTab}
               onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
               onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
             />

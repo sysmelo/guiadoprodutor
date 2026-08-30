@@ -1,5 +1,6 @@
 export type NavigationTab = 
   | 'dashboard'
+  | 'studio_one'
   | 'vocal_recording'
   | 'mix'
   | 'vocal_cleaning'

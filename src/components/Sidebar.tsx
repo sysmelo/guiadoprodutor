@@ -14,7 +14,8 @@ import {
   Activity,
   Clock,
   Radio,
-  Keyboard
+  Keyboard,
+  Waves
 } from 'lucide-react';
 import { NavigationTab, Project } from '../types';
 
@@ -39,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const menuItems: { id: NavigationTab; label: string; icon: React.ElementType; badge?: string; shortcutKey?: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, shortcutKey: '^1' },
+    { id: 'studio_one', label: 'Studio One 7 & Aux', icon: Waves, badge: 'S1 v7', shortcutKey: '^S' },
     { id: 'vocal_recording', label: 'Gravação & Tracking', icon: Radio, badge: 'Nível 1', shortcutKey: '^2' },
     { id: 'mix', label: 'Mix & Preparação', icon: Sliders, badge: 'Nível 2', shortcutKey: '^3' },
     { id: 'vocal_cleaning', label: 'Vocal Cleaning', icon: Mic, badge: 'Studio', shortcutKey: '^4' },

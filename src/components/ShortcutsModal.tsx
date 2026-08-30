@@ -14,7 +14,8 @@ export const ShortcutsModal: React.FC<ShortcutsModalProps> = ({ isOpen, onClose 
       category: 'Navegação Rápida entre Módulos (Global)',
       shortcuts: [
         { keys: ['Ctrl', '1'], label: 'Dashboard Geral' },
-        { keys: ['Ctrl', '2'], label: 'Gravação & Tracking de Vocal (NOVO)' },
+        { keys: ['Ctrl', 'S'], label: 'Studio One 7 Workflow & Canais Auxiliares (NOVO)' },
+        { keys: ['Ctrl', '2'], label: 'Gravação & Tracking de Vocal' },
         { keys: ['Ctrl', '3'], label: 'Mix & Preparação (Checklist)' },
         { keys: ['Ctrl', '4'], label: 'Vocal Cleaning (Correção de Problemas)' },
         { keys: ['Ctrl', '5'], label: 'Master Suite (Cadeia de Master)' },
