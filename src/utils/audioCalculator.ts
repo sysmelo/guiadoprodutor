@@ -121,6 +121,13 @@ export const defaultDemoProjects = [
     processLevel: 'Nível 2: Mixagem' as const,
     status: 'Em Mixagem' as const,
     notes: 'Vocal feminino gravado com microfone condensador. Necessita de-essing em 6.5kHz e corte de boxiness em 320Hz. Bateria com percussões ricas.',
+    projectTodos: [
+      { id: 'todo-demo-1', text: 'Aplicar De-Esser dinâmico em 6.5kHz no vocal principal', completed: true, category: 'Vocal', priority: 'Alta', createdAt: '28/08' },
+      { id: 'todo-demo-2', text: 'Ajustar Sidechain Ducking no Reverb e Delay da voz', completed: true, category: 'Mix', priority: 'Normal', createdAt: '28/08' },
+      { id: 'todo-demo-3', text: 'Corte de ressonâncias em 320Hz no canal das percussões', completed: false, category: 'Mix', priority: 'Alta', createdAt: '29/08' },
+      { id: 'todo-demo-4', text: 'Checar balanço do Kick e Bass com medidor VU em mono', completed: false, category: 'Mix', priority: 'Urgente', createdAt: '30/08' },
+      { id: 'todo-demo-5', text: 'Masterizar versão final em -14.0 LUFS para Spotify', completed: false, category: 'Master', priority: 'Normal', createdAt: '30/08' }
+    ],
     checklist: {
       'chk-prep-1': true,
       'chk-prep-2': true,

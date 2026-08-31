@@ -27,6 +27,15 @@ export type ProjectPriority = 'Baixa' | 'Normal' | 'Alta' | 'Urgente';
 export type InstrumentalStatus = 'Em Criação' | 'Beat Pronto' | 'Aprovado pelo Artista' | 'Stems Exportados';
 export type RecordingSessionStatus = 'Agendado' | 'Confirmado' | 'Gravando Hoje' | 'Concluído' | 'Remarcado' | 'Cancelado';
 
+export interface ProjectTodoItem {
+  id: string;
+  text: string;
+  completed: boolean;
+  category?: 'Mix' | 'Master' | 'Vocal' | 'Gravação' | 'Arranjo' | 'Geral';
+  priority?: 'Normal' | 'Alta' | 'Urgente';
+  createdAt: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -40,6 +49,8 @@ export interface Project {
   processLevel?: ProcessLevel;
   status: ProjectStatus;
   notes: string;
+  projectTodos?: ProjectTodoItem[];
+  lastNotesModified?: string;
   checklist: {
     [key: string]: boolean;
   };

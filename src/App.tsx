@@ -213,6 +213,7 @@ export const App: React.FC = () => {
               activeProject={activeProject}
               projects={projects}
               onSelectProject={handleSelectProject}
+              onUpdateProject={handleUpdateProject}
               onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
               onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
             />

@@ -24,12 +24,14 @@ import {
 import { NavigationTab, Project, ProcessLevel } from '../types';
 import { getProjectDeadlineStatus } from '../utils/audioCalculator';
 import { SmartGenreTips } from './SmartGenreTips';
+import { ProjectNotesSection } from './ProjectNotesSection';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavigationTab) => void;
   activeProject: Project | null;
   projects?: Project[];
   onSelectProject?: (id: string) => void;
+  onUpdateProject?: (project: Project) => void;
   onOpenAnalyzer: () => void;
   onOpenDelayCalc: () => void;
 }
@@ -39,6 +41,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   activeProject,
   projects = [],
   onSelectProject,
+  onUpdateProject,
   onOpenAnalyzer,
   onOpenDelayCalc
 }) => {
@@ -200,6 +203,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         onNavigate={onNavigate}
         onOpenDelayCalc={onOpenDelayCalc}
         onOpenAnalyzer={onOpenAnalyzer}
+      />
+
+      {/* PROJECT NOTES & MIXING TODOS (Persisted in LocalStorage) */}
+      <ProjectNotesSection
+        activeProject={activeProject}
+        projects={projects}
+        onUpdateProject={onUpdateProject}
+        onSelectProject={onSelectProject}
       />
 
       {/* PRO WORKFLOW BANNERS: FL STUDIO & STUDIO ONE 7 SUITES */}
