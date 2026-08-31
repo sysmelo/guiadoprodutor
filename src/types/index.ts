@@ -1,6 +1,7 @@
 export type NavigationTab = 
   | 'dashboard'
   | 'studio_one'
+  | 'recording_schedule'
   | 'vocal_recording'
   | 'mix'
   | 'vocal_cleaning'
@@ -22,6 +23,9 @@ export type ProcessLevel =
   | 'Nível 4: Finalização / Entrega';
 
 export type ProjectPriority = 'Baixa' | 'Normal' | 'Alta' | 'Urgente';
+
+export type InstrumentalStatus = 'Em Criação' | 'Beat Pronto' | 'Aprovado pelo Artista' | 'Stems Exportados';
+export type RecordingSessionStatus = 'Agendado' | 'Confirmado' | 'Gravando Hoje' | 'Concluído' | 'Remarcado' | 'Cancelado';
 
 export interface Project {
   id: string;
@@ -47,6 +51,44 @@ export interface Project {
   referenceTracks?: string;
   clientContact?: string;
   deliveryFormat?: string;
+  
+  // Pipeline Beat -> Gravação
+  instrumentalDate?: string; // Data da criação do instrumental (YYYY-MM-DD)
+  instrumentalStatus?: InstrumentalStatus;
+  recordingDate?: string; // Data da gravação agendada (YYYY-MM-DD)
+  recordingTime?: string; // Horário de início (HH:mm)
+  recordingEndTime?: string; // Horário de término (HH:mm)
+  recordingStatus?: RecordingSessionStatus;
+  recordingMic?: string;
+  recordingRoom?: string;
+  recordingEngineer?: string;
+  recordingType?: string;
+  recordingNotes?: string;
+}
+
+export interface RecordingScheduleItem {
+  id: string;
+  projectId?: string;
+  projectName: string;
+  artist: string;
+  genre: string;
+  bpm: number;
+  key: string;
+  instrumentalDate: string;
+  instrumentalStatus: InstrumentalStatus;
+  recordingDate: string;
+  recordingTime: string;
+  recordingEndTime?: string;
+  recordingStatus: RecordingSessionStatus;
+  micAndPreamp?: string;
+  studioRoom?: string;
+  engineer?: string;
+  sessionType?: string;
+  clientContact?: string;
+  checklist?: {
+    [key: string]: boolean;
+  };
+  notes?: string;
 }
 
 export type PluginType = 'FL Native' | 'FabFilter' | 'Free External' | 'Other External';

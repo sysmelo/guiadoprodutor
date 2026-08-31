@@ -24,9 +24,12 @@ import {
   Github,
   TrendingUp,
   Tag,
-  Radio
+  Radio,
+  Flame,
+  Globe
 } from 'lucide-react';
 import { getProjectDeadlineStatus } from '../utils/audioCalculator';
+import { getAllGenres } from '../utils/genresManager';
 import { GitHubExportModal } from './GitHubExportModal';
 
 interface ProjectsViewProps {
@@ -54,9 +57,9 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   // Form State
   const [formName, setFormName] = useState('');
   const [formArtist, setFormArtist] = useState('');
-  const [formGenre, setFormGenre] = useState('Afrobeat');
-  const [formBpm, setFormBpm] = useState<number>(120);
-  const [formKey, setFormKey] = useState('C Menor');
+  const [formGenre, setFormGenre] = useState('Kuduro (Batida / Luanda)');
+  const [formBpm, setFormBpm] = useState<number>(140);
+  const [formKey, setFormKey] = useState('F# Menor');
   const [formProcessLevel, setFormProcessLevel] = useState<ProcessLevel>('Nível 2: Mixagem');
   const [formDeadline, setFormDeadline] = useState<string>(() => {
     const d = new Date();
@@ -69,12 +72,14 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   const [formClientContact, setFormClientContact] = useState('');
   const [formDeliveryFormat, setFormDeliveryFormat] = useState('WAV 24-bit / 48kHz + MP3 320k');
 
+  const allGenresList = getAllGenres();
+
   const resetForm = () => {
     setFormName('');
     setFormArtist('');
-    setFormGenre('Afrobeat');
-    setFormBpm(120);
-    setFormKey('C Menor');
+    setFormGenre('Kuduro (Batida / Luanda)');
+    setFormBpm(140);
+    setFormKey('F# Menor');
     setFormProcessLevel('Nível 2: Mixagem');
     const d = new Date();
     d.setDate(d.getDate() + 7);
@@ -86,6 +91,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
     setFormDeliveryFormat('WAV 24-bit / 48kHz + MP3 320k');
     setIsCreating(false);
     setEditingId(null);
+  };
+
+  const handleQuickGenreSelect = (genreName: string, defaultBpm: number, defaultKey?: string) => {
+    setFormGenre(genreName);
+    setFormBpm(defaultBpm);
+    if (defaultKey) setFormKey(defaultKey);
   };
 
   const handleCreateNew = (e: React.FormEvent) => {
@@ -533,15 +544,80 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
             </div>
 
             <div>
-              <label className="text-gray-400 font-bold block mb-1">Gênero Musical</label>
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-cyan-400 font-bold block">Gênero Musical *</label>
+                {formGenre.toLowerCase().includes('kuduro') && (
+                  <span className="text-[10px] font-mono text-amber-400 font-bold flex items-center gap-1">
+                    <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    Kuduro de Luanda
+                  </span>
+                )}
+              </div>
               <select
                 value={formGenre}
-                onChange={(e) => setFormGenre(e.target.value)}
-                className="w-full bg-[#0B0E11] border border-[#2A2F36] rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-cyan-500"
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setFormGenre(val);
+                  // Intelligent default BPM when selecting known genres
+                  if (val.toLowerCase().includes('kuduro')) setFormBpm(140);
+                  else if (val.toLowerCase().includes('semba')) setFormBpm(105);
+                  else if (val.toLowerCase().includes('tarraxinha')) setFormBpm(88);
+                  else if (val.toLowerCase().includes('afrobeat')) setFormBpm(104);
+                  else if (val.toLowerCase().includes('amapiano')) setFormBpm(113);
+                  else if (val.toLowerCase().includes('trap')) setFormBpm(140);
+                  else if (val.toLowerCase().includes('drill')) setFormBpm(142);
+                  else if (val.toLowerCase().includes('boombap') || val.toLowerCase().includes('hip hop')) setFormBpm(92);
+                  else if (val.toLowerCase().includes('r&b')) setFormBpm(85);
+                  else if (val.toLowerCase().includes('house')) setFormBpm(124);
+                }}
+                className="w-full bg-[#0B0E11] border border-cyan-500/50 rounded-lg px-3 py-2.5 text-white font-medium focus:outline-none focus:border-cyan-400"
               >
-                {['Afrobeat', 'Amapiano', 'Kizomba / Zouk', 'Trap', 'Drill', 'Hip Hop Clássico', 'Pop Moderno', 'R&B Contemporâneo', 'Reggaeton', 'EDM / House', 'Rock / Indie', 'Funk Brasileiro', 'Sertanejo', 'Lo-Fi', 'Gospel'].map(g => (
-                  <option key={g} value={g}>{g}</option>
-                ))}
+                <optgroup label="🇦🇴 Ritmos Angolanos & Africanos">
+                  <option value="Kuduro (Batida / Luanda)">🇦🇴 Kuduro (Batida / Luanda) — 135-145 BPM</option>
+                  <option value="Semba & Ritmos Tradicionais">🇦🇴 Semba & Ritmos Tradicionais — 95-115 BPM</option>
+                  <option value="Tarraxinha & Tarraxo">🇦🇴 Tarraxinha & Tarraxo — 82-94 BPM</option>
+                  <option value="Afrobeat">🌍 Afrobeat — 98-112 BPM</option>
+                  <option value="Amapiano">🇿🇦 Amapiano — 110-118 BPM</option>
+                  <option value="Kizomba & Ghetto Zouk">🇦🇴 Kizomba & Ghetto Zouk — 88-98 BPM</option>
+                  <option value="Afro House">🌍 Afro House — 120-126 BPM</option>
+                </optgroup>
+
+                <optgroup label="🎧 Urban, Trap & Hip-Hop">
+                  <option value="Trap">🔥 Trap — 130-160 BPM</option>
+                  <option value="Drill (UK / NY / Afro Drill)">🇬🇧 Drill (UK / NY / Afro Drill) — 138-148 BPM</option>
+                  <option value="Hip Hop / Boombap">🎙️ Hip Hop / Boombap — 85-98 BPM</option>
+                  <option value="R&B / Soul Contemporâneo">💜 R&B / Soul Contemporâneo — 65-95 BPM</option>
+                  <option value="Dancehall">🇯🇲 Dancehall — 95-110 BPM</option>
+                  <option value="Reggaeton">🌴 Reggaeton — 88-100 BPM</option>
+                </optgroup>
+
+                <optgroup label="🎛️ Pop, Eletrônica & Outros">
+                  <option value="Pop Comercial">✨ Pop Comercial — 105-128 BPM</option>
+                  <option value="Deep House">🎧 Deep House — 120-125 BPM</option>
+                  <option value="EDM / House">⚡ EDM / House — 124-130 BPM</option>
+                  <option value="Funk Brasileiro">🇧🇷 Funk Brasileiro — 128-135 BPM</option>
+                  <option value="Rock / Indie">🎸 Rock / Indie — 110-140 BPM</option>
+                  <option value="Sertanejo">🤠 Sertanejo — 110-130 BPM</option>
+                  <option value="Lo-Fi">☕ Lo-Fi Hip Hop — 75-88 BPM</option>
+                  <option value="Gospel">🙏 Gospel / Worship — 68-95 BPM</option>
+                  <option value="Zouk & Retro Zouk">🏝️ Zouk & Retro Zouk — 90-102 BPM</option>
+                </optgroup>
+
+                {allGenresList.filter(g => ![
+                  'kuduro', 'semba', 'tarraxinha', 'afrobeat', 'amapiano', 'kizomba', 'afrohouse', 
+                  'trap', 'drill', 'hiphop', 'rnb', 'dancehall', 'reggaeton', 'pop', 'deephouse', 'zouk'
+                ].includes(g.id)).length > 0 && (
+                  <optgroup label="🌟 Estilos Personalizados Salvos">
+                    {allGenresList
+                      .filter(g => ![
+                        'kuduro', 'semba', 'tarraxinha', 'afrobeat', 'amapiano', 'kizomba', 'afrohouse', 
+                        'trap', 'drill', 'hiphop', 'rnb', 'dancehall', 'reggaeton', 'pop', 'deephouse', 'zouk'
+                      ].includes(g.id))
+                      .map(g => (
+                        <option key={g.id} value={g.name}>{g.name} ({g.bpmRange})</option>
+                      ))}
+                  </optgroup>
+                )}
               </select>
             </div>
 
@@ -623,6 +699,54 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 placeholder="Ex: +244 923 000 000 ou email"
                 className="w-full bg-[#0B0E11] border border-[#2A2F36] rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-cyan-500"
               />
+            </div>
+          </div>
+
+          {/* Quick 1-Click Genre & BPM Presets Bar */}
+          <div className="p-3 rounded-xl bg-[#090C0F] border border-[#242A34] space-y-2">
+            <div className="flex items-center justify-between text-[11px]">
+              <span className="text-gray-400 font-bold flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                Preenchimento Rápido de Gênero & BPM Típico:
+              </span>
+              <span className="text-[10px] font-mono text-cyan-400">Clique para selecionar e calibrar</span>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[
+                { name: 'Kuduro (Batida / Luanda)', label: '🇦🇴 Kuduro', bpm: 140, key: 'F# Menor', highlight: true },
+                { name: 'Semba & Ritmos Tradicionais', label: '🇦🇴 Semba', bpm: 105, key: 'A Menor' },
+                { name: 'Tarraxinha & Tarraxo', label: '🇦🇴 Tarraxinha', bpm: 88, key: 'D Menor' },
+                { name: 'Afrobeat', label: '🌍 Afrobeat', bpm: 104, key: 'G Menor' },
+                { name: 'Amapiano', label: '🇿🇦 Amapiano', bpm: 113, key: 'E Menor' },
+                { name: 'Kizomba & Ghetto Zouk', label: '🇦🇴 Kizomba', bpm: 92, key: 'F Menor' },
+                { name: 'Trap', label: '🔥 Trap', bpm: 140, key: 'C Menor' },
+                { name: 'Drill (UK / NY / Afro Drill)', label: '🇬🇧 Drill', bpm: 142, key: 'C# Menor' },
+                { name: 'Hip Hop / Boombap', label: '🎙️ Boombap', bpm: 92, key: 'A Menor' },
+                { name: 'R&B / Soul Contemporâneo', label: '💜 R&B', bpm: 85, key: 'A Menor' },
+                { name: 'Funk Brasileiro', label: '🇧🇷 Funk BR', bpm: 130, key: 'D Menor' },
+                { name: 'Pop Comercial', label: '✨ Pop', bpm: 120, key: 'C Maior' }
+              ].map(preset => {
+                const isSelected = formGenre === preset.name;
+                return (
+                  <button
+                    key={preset.name}
+                    type="button"
+                    onClick={() => handleQuickGenreSelect(preset.name, preset.bpm, preset.key)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer border flex items-center gap-1.5 ${
+                      isSelected
+                        ? 'bg-amber-500 text-black border-amber-400 shadow-md font-extrabold'
+                        : preset.highlight
+                        ? 'bg-amber-500/10 text-amber-300 border-amber-500/40 hover:bg-amber-500/20'
+                        : 'bg-[#15191E] text-gray-300 hover:text-white border-[#2A2F36] hover:border-gray-500'
+                    }`}
+                  >
+                    <span>{preset.label}</span>
+                    <span className={`text-[9px] font-mono px-1 rounded ${isSelected ? 'bg-black/20 text-black' : 'bg-[#0B0E11] text-gray-400'}`}>
+                      {preset.bpm}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
@@ -740,8 +864,19 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
                 </div>
 
                 {/* Specs pill */}
-                <div className="flex items-center gap-2 text-xs font-mono text-gray-300">
-                  <span className="px-2 py-0.5 rounded bg-[#0B0E11] border border-[#2A2F36]">{proj.genre}</span>
+                <div className="flex flex-wrap items-center gap-1.5 text-xs font-mono text-gray-300">
+                  <span className={`px-2 py-0.5 rounded border flex items-center gap-1 font-bold ${
+                    proj.genre.toLowerCase().includes('kuduro')
+                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 shadow-sm'
+                      : proj.genre.toLowerCase().includes('semba') || proj.genre.toLowerCase().includes('tarrax')
+                      ? 'bg-cyan-500/15 text-cyan-300 border-cyan-500/40'
+                      : 'bg-[#0B0E11] text-gray-300 border-[#2A2F36]'
+                  }`}>
+                    {proj.genre.toLowerCase().includes('kuduro') && (
+                      <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
+                    )}
+                    {proj.genre}
+                  </span>
                   <span className="px-2 py-0.5 rounded bg-[#0B0E11] border border-[#2A2F36] text-emerald-400 font-bold">{proj.bpm} BPM</span>
                   <span className="px-2 py-0.5 rounded bg-[#0B0E11] border border-[#2A2F36] text-orange-400">{proj.key}</span>
                 </div>

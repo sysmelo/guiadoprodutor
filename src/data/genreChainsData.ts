@@ -208,55 +208,182 @@ export const genreChainsData: GenreChain[] = [
   },
   {
     id: 'kuduro',
-    name: 'Kuduro & Afro House',
-    origin: 'Angola / África do Sul',
-    bpmRange: '120 – 140 BPM',
+    name: 'Kuduro (Batida / Luanda)',
+    origin: 'Angola (Luanda / Cazenga / Sambizanga / Viana)',
+    bpmRange: '135 – 145 BPM',
     modes: {
       CLEAN: {
-        description: 'Energia rítmica contagiante, percussões orgânicas e grooves de baixo rápidos.',
+        description: 'Batida angolana rápida com transientes limpos, tarolas e dikanza presentes, vocal energético articulado e subgrave firme.',
         vocalChain: [
-          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'HPF a 95Hz' },
-          { position: 2, plugin: 'Fruity Limiter', action: 'Compressão rápida', params: 'Ratio 4:1 | Att 10ms' }
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Corte cirúrgico', params: 'HPF a 100Hz + corte em 300Hz para clareza rápida' },
+          { position: 2, plugin: 'Fruity Limiter', action: 'Compressão rápida de controle', params: 'Ratio 4.5:1 | Att 8ms | Rel 40ms | GR 4dB' },
+          { position: 3, plugin: 'Maximus', action: 'De-Esser rápido', params: 'Segurar sibilâncias dos gritos em 5.8kHz' },
+          { position: 4, plugin: 'Fruity Delay 3 (Send)', action: '1/16 Ping-Pong Slap Delay', params: 'Feedback 15% | High-pass 400Hz' },
+          { position: 5, plugin: 'Fruity Reeverb 2 (Send)', action: 'Short Bright Room', params: 'Decay 0.9s | Damping alto para não embolar' }
         ],
         drumsChain: [
-          { element: 'Percussões & Apitos', plugin: 'Fruity Parametric EQ 2', action: 'Corte de ressonâncias' }
+          { element: 'Kick 4x4 & Tarolas', plugin: 'Fruity Parametric EQ 2', action: 'Punch no peito a 70Hz + estalo da tarola em 3.5kHz' },
+          { element: 'Dikanza (Reco-reco) & Apitos', plugin: 'Fruity Stereo Enhancer', action: 'Abertura estéreo com corte de ressonâncias em 2.8kHz' },
+          { element: 'Congas & Percussões Sincopadas', plugin: 'Fruity Soft Clipper', action: 'Transientes secos e velozes' }
         ],
         bassChain: [
-          { element: 'Bass', plugin: 'Fruity Parametric EQ 2', action: 'Mono total e corte em 30Hz' }
+          { element: '808 / Sub Bass Rápido', plugin: 'Fruity Parametric EQ 2', action: 'Mono total abaixo de 110Hz + corte de ressonâncias' }
         ],
         masterChain: [
-          { position: 1, plugin: 'Fruity Limiter', action: 'Alvo -10 LUFS' }
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Tight Low Cut em 30Hz + High Shelf em 13kHz' },
+          { position: 2, plugin: 'Maximus', action: 'Multiband Glue para amarrar os 140 BPM' },
+          { position: 3, plugin: 'Fruity Soft Clipper', action: 'Absorver o pico das tarolas e bumbo' },
+          { position: 4, plugin: 'Fruity Limiter', action: 'Target -9 a -10 LUFS | Ceiling -0.8 dBTP' }
         ],
-        mixSecret: 'No Kuduro, o ritmo e as dobras vocais enérgicas precisam ter transientes rápidos e vivos.'
+        mixSecret: 'No Kuduro, as tarolas e percussões sincopadas conversam em 16ths: mantenha o Kick e o 808 100% no centro e espalhe a dikanza e apitos nas laterais.'
       },
       MODERN: {
-        description: 'Produção eletrônica potente com graves de club e vocais incisivos.',
+        description: 'Produção pesada de Luanda com kick estrondoso, 808 com harmônicos quentes, vocais com overdrive e autotune rápido.',
         vocalChain: [
-          { position: 1, plugin: 'Fruity Fast Dist', action: 'Leve saturação', params: 'Mix 20%' }
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Boost de presença e ataque', params: '+3dB em 4kHz + High Shelf em 12kHz' },
+          { position: 2, plugin: 'Fruity Fast Dist / Blood Overdrive', action: 'Saturação de atitude vocal', params: 'Drive 0.22 | Mix 25%' },
+          { position: 3, plugin: 'Fruity Limiter', action: 'Fast Peak Limiting', params: 'Ratio 6:1 | Att 5ms | Rel 35ms' },
+          { position: 4, plugin: 'Fruity Delay 3', action: 'Ducking Echo 1/8', params: 'Ativado apenas nas pontas das rimas' }
         ],
         drumsChain: [
-          { element: 'Kick 4x4', plugin: 'Fruity Soft Clipper', action: 'Punch no peito' }
+          { element: 'Kick & Tarola Angolana', plugin: 'Fruity Soft Clipper', action: 'Empurrar contra 0dB para soco no peito' },
+          { element: 'Percussões & Címbalos', plugin: 'Fruity Parametric EQ 2', action: 'Brilho em 8kHz com de-harsh em 4.5kHz' }
         ],
         bassChain: [
-          { element: 'Sub', plugin: 'Fruity Limiter', action: 'Sidechain direto com o 4x4 kick' }
+          { element: '808 Kuduro / Donk Bass', plugin: 'WaveShaper', action: 'Saturação harmônica para soar em telemóveis e colunas' }
         ],
         masterChain: [
-          { position: 1, plugin: 'Fruity Soft Clipper + Limiter', action: 'Alvo -8 LUFS' }
+          { position: 1, plugin: 'Fruity Soft Clipper', action: 'Clip suave de entrada' },
+          { position: 2, plugin: 'Maximus', action: 'Ataque rápido nos médios' },
+          { position: 3, plugin: 'Fruity Limiter', action: 'Target -8 a -8.5 LUFS (Potência de Pista)' }
         ],
-        mixSecret: 'Sidechain do Kick em todas as faixas de sintetizadores para criar o bombeamento característico do House.'
+        mixSecret: 'Sidechain ultra-rápido (release em 30ms) do Kick no 808 para que a batida 4x4 bata sem cancelar o subgrave nos 140 BPM.'
       },
       AGGRESSIVE: {
-        description: 'Som de festival de alta potência e pressão sonora máxima.',
-        vocalChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Maximizer', params: 'Ratio 6:1' }],
-        drumsChain: [{ element: 'All Drums', plugin: 'Fruity Soft Clipper', action: 'Hard clip' }],
-        bassChain: [{ element: 'Bass', plugin: 'WaveShaper', action: 'Distorção analógica' }],
-        masterChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Alvo -7 LUFS' }],
-        mixSecret: 'Use o Fruity Soft Clipper no Master antes do limiter para absorver os transientes da caixa e bumbo.'
+        description: 'Pressão sonora extrema de discoteca / som de rua (paredão de som), graves brutais e vocais hiper-comprimidos.',
+        vocalChain: [
+          { position: 1, plugin: 'Fruity Fast Dist', action: 'Hard Distortion & Grit', params: 'Drive 40% | Color 6k' },
+          { position: 2, plugin: 'Fruity Limiter', action: 'Brickwall Vocal Comp', params: 'Ratio 8:1 | GR 8-10dB' },
+          { position: 3, plugin: 'Maximus', action: 'Multiband De-Esser duplo' }
+        ],
+        drumsChain: [
+          { element: 'Batida Master (Drums Bus)', plugin: 'Fruity Soft Clipper', action: 'Hard clip em +3dB de entrada' }
+        ],
+        bassChain: [
+          { element: '808 Bass', plugin: 'Fruity Blood Overdrive', action: 'Drive 0.45 + Bass boost em 60Hz' }
+        ],
+        masterChain: [
+          { position: 1, plugin: 'Fruity Soft Clipper', action: 'Hard clipping nos transientes' },
+          { position: 2, plugin: 'Fruity Limiter', action: 'Target -7 a -7.5 LUFS (Street / Club Ready)' }
+        ],
+        mixSecret: 'Use compressão paralela esmagada no bus de percussões de Kuduro (FET Comp com tudo ligado) misturada em 30% com o sinal limpo.'
       }
     },
     keyAdvice: [
-      'Bateria 4 no chão (Four-on-the-floor) com síncopes percussivas rápidas.',
-      'Mantenha as frequências agudas dos pratos sem aspereza (de-harsh em 4kHz).'
+      'Andamento clássico entre 138 e 142 BPM com compasso 4/4 acelerado.',
+      'A dikanza (reco-reco) e os pratos precisam de compressão multibanda para não furar os ouvidos.',
+      'Dobras e gritos de hype nos canais L/R dão a assinatura autêntica de Kuduro de Luanda.'
+    ]
+  },
+  {
+    id: 'semba',
+    name: 'Semba & Ritmos Tradicionais',
+    origin: 'Angola (Luanda / Ilha do Cabo)',
+    bpmRange: '95 – 115 BPM',
+    modes: {
+      CLEAN: {
+        description: 'Guitarras de Semba dedilhadas cristalinas, dikanza orgânica, congas quentes, baixo melódico e vocal aveludado.',
+        vocalChain: [
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Calor e clareza', params: 'HPF a 80Hz + corpo em 200Hz' },
+          { position: 2, plugin: 'Fruity Limiter', action: 'Compressão óptica suave', params: 'Ratio 2.5:1 | Att 25ms | Rel 120ms' },
+          { position: 3, plugin: 'Fruity Reeverb 2', action: 'Warm Acoustic Plate', params: 'Decay 1.8s' }
+        ],
+        drumsChain: [
+          { element: 'Congas, Dikanza & Pandeiro', plugin: 'Fruity Parametric EQ 2', action: 'Preservar dinâmica acústica e ar em 10kHz' }
+        ],
+        bassChain: [
+          { element: 'Baixo Melódico (Bass Guitar)', plugin: 'Fruity Blood Overdrive', action: 'Aquecimento valvulado suave' }
+        ],
+        masterChain: [
+          { position: 1, plugin: 'Fruity Limiter', action: 'Alvo -13 LUFS | True Peak -1.0 dBTP' }
+        ],
+        mixSecret: 'As guitarras de Semba (solo e ritmo) devem ser panadas em 40% L e 40% R para deixar o centro aberto para a voz e o dikanza.'
+      },
+      MODERN: {
+        description: 'Semba moderno com arranjo contemporâneo de metais, percussões híbridas e vocal com presença de estúdio.',
+        vocalChain: [
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Ar sedoso em 12kHz' },
+          { position: 2, plugin: 'Fruity Blood Overdrive', action: 'Harmônicos de calor 15%' }
+        ],
+        drumsChain: [
+          { element: 'Percussões & Bumbo', plugin: 'Fruity Soft Clipper', action: 'Pegada moderna' }
+        ],
+        bassChain: [
+          { element: 'Bass Guitar', plugin: 'Maximus', action: 'Controle de dinâmica das notas graves' }
+        ],
+        masterChain: [
+          { position: 1, plugin: 'Fruity Limiter', action: 'Alvo -11 LUFS' }
+        ],
+        mixSecret: 'O baixo no Semba é muito ativo e melódico: comprima suavemente em 3 estágios em vez de esmagar em um único compressor.'
+      },
+      AGGRESSIVE: {
+        description: 'Semba de Carnaval / Festival com alta energia e percussão maciça.',
+        vocalChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Comp 4:1' }],
+        drumsChain: [{ element: 'Batucada', plugin: 'Fruity Soft Clipper', action: 'Punch' }],
+        bassChain: [{ element: 'Bass', plugin: 'WaveShaper', action: 'Saturação' }],
+        masterChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Alvo -9.5 LUFS' }],
+        mixSecret: 'Corte as ressonâncias estridentes da dikanza em 3.2kHz.'
+      }
+    },
+    keyAdvice: [
+      'Guitarras com afinação clássica e chorus suave.',
+      'Síncope do dikanza e ngoma são o coração da pulsação de Semba.'
+    ]
+  },
+  {
+    id: 'tarraxinha',
+    name: 'Tarraxinha & Tarraxo',
+    origin: 'Angola / Cabo Verde / Lisboa',
+    bpmRange: '82 – 94 BPM',
+    modes: {
+      CLEAN: {
+        description: 'Subgraves ultra-profundos, bumbo macio e vocais sensuais sussurrados com delays estéreo.',
+        vocalChain: [
+          { position: 1, plugin: 'Fruity Parametric EQ 2', action: 'HPF a 75Hz + ar em 13kHz' },
+          { position: 2, plugin: 'Fruity Limiter', action: 'Compressão transparente', params: 'Ratio 3:1 | GR 3dB' },
+          { position: 3, plugin: 'Fruity Delay 3', action: '1/4 Ping Pong Delay' }
+        ],
+        drumsChain: [
+          { element: 'Tarraxinha Kick & Rimshot', plugin: 'Fruity Parametric EQ 2', action: 'Subgrave aveludado em 45Hz' }
+        ],
+        bassChain: [
+          { element: 'Deep Sub 808', plugin: 'Maximus', action: 'Low band control em mono' }
+        ],
+        masterChain: [
+          { position: 1, plugin: 'Fruity Limiter', action: 'Alvo -11 LUFS' }
+        ],
+        mixSecret: 'O grave da Tarraxinha precisa descer até 35Hz sem distorcer: corte frequências inúteis nos outros canais.'
+      },
+      MODERN: {
+        description: 'Tarraxo contemporâneo com sintetizadores pesados e 808s híbridos.',
+        vocalChain: [{ position: 1, plugin: 'Fruity Parametric EQ 2', action: 'Presence boost' }],
+        drumsChain: [{ element: 'Drums', plugin: 'Fruity Soft Clipper', action: 'Punch' }],
+        bassChain: [{ element: 'Sub 808', plugin: 'Fruity Blood Overdrive', action: 'Harmônicos de calor' }],
+        masterChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Alvo -9 LUFS' }],
+        mixSecret: 'Sidechain do kick no sub para dar espaço à cabeça do bumbo.'
+      },
+      AGGRESSIVE: {
+        description: 'Heavy Tarraxo Bass para sound systems.',
+        vocalChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Comp 5:1' }],
+        drumsChain: [{ element: 'Drums', plugin: 'Fruity Soft Clipper', action: 'Hard clip' }],
+        bassChain: [{ element: 'Bass', plugin: 'WaveShaper', action: 'Saturação analógica' }],
+        masterChain: [{ position: 1, plugin: 'Fruity Limiter', action: 'Alvo -8 LUFS' }],
+        mixSecret: 'Monitore em fones com boa resposta de subgraves para evitar clipping digital.'
+      }
+    },
+    keyAdvice: [
+      'Ritmo sensual e lento com síncope no contratempo.',
+      'Vocais com ambiência íntima e reverb suave.'
     ]
   },
   {

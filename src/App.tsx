@@ -16,6 +16,7 @@ import { ExportView } from './components/ExportView';
 import { ProjectsView } from './components/ProjectsView';
 import { SettingsOfflineView } from './components/SettingsOfflineView';
 import { StudioOneWorkflowView } from './components/StudioOneWorkflowView';
+import { RecordingScheduleView } from './components/RecordingScheduleView';
 import { AudioAnalyzerModal } from './components/AudioAnalyzerModal';
 import { DelayCalculatorModal } from './components/DelayCalculatorModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
@@ -109,6 +110,13 @@ export const App: React.FC = () => {
             if (!isInput) {
               e.preventDefault();
               setCurrentTab('studio_one');
+            }
+            break;
+          case 'g':
+          case 'G':
+            if (!isInput) {
+              e.preventDefault();
+              setCurrentTab('recording_schedule');
             }
             break;
           case ',':
@@ -215,6 +223,16 @@ export const App: React.FC = () => {
               onNavigate={setCurrentTab}
               onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
               onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
+            />
+          )}
+
+          {currentTab === 'recording_schedule' && (
+            <RecordingScheduleView
+              projects={projects}
+              activeProjectId={activeProjectId}
+              onSelectProject={handleSelectProject}
+              onSaveProjects={handleSaveProjects}
+              onNavigate={setCurrentTab}
             />
           )}
 

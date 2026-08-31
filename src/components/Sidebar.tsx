@@ -15,7 +15,8 @@ import {
   Clock,
   Radio,
   Keyboard,
-  Waves
+  Waves,
+  Calendar
 } from 'lucide-react';
 import { NavigationTab, Project } from '../types';
 
@@ -41,12 +42,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const menuItems: { id: NavigationTab; label: string; icon: React.ElementType; badge?: string; shortcutKey?: string }[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, shortcutKey: '^1' },
     { id: 'studio_one', label: 'Studio One 7 & Aux', icon: Waves, badge: 'S1 v7', shortcutKey: '^S' },
+    { id: 'recording_schedule', label: 'Agendar Gravação', icon: Calendar, badge: 'Pipeline', shortcutKey: '^G' },
     { id: 'vocal_recording', label: 'Gravação & Tracking', icon: Radio, badge: 'Nível 1', shortcutKey: '^2' },
     { id: 'mix', label: 'Mix & Preparação', icon: Sliders, badge: 'Nível 2', shortcutKey: '^3' },
     { id: 'vocal_cleaning', label: 'Vocal Cleaning', icon: Mic, badge: 'Studio', shortcutKey: '^4' },
     { id: 'master', label: 'Master Suite', icon: Flame, badge: 'Nível 3', shortcutKey: '^5' },
     { id: 'instruments', label: 'Instrumentos', icon: Music, shortcutKey: '^6' },
-    { id: 'genres', label: 'Estilos Musicais', icon: Globe, badge: '15', shortcutKey: '^7' },
+    { id: 'genres', label: 'Estilos & Kuduro', icon: Globe, badge: 'Kuduro+', shortcutKey: '^7' },
     { id: 'plugins', label: 'Plugins & Arsenal', icon: Plug, shortcutKey: '^8' },
     { id: 'mix_doctor', label: 'Mix Doctor', icon: Stethoscope, badge: 'Alerts', shortcutKey: '^9' },
     { id: 'export', label: 'Exportação & Guia', icon: Share2, badge: 'Nível 4', shortcutKey: '^0' },
