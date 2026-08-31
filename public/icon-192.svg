@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <linearGradient id="bgGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1116"/>
+      <stop offset="100%" stop-color="#050709"/>
+    </linearGradient>
+    <linearGradient id="primaryGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="accentGrad192" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7700"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="192" height="192" rx="42" fill="url(#bgGrad192)"/>
+  <rect x="2" y="2" width="188" height="188" rx="40" fill="none" stroke="url(#primaryGrad192)" stroke-width="2" stroke-opacity="0.5"/>
+
+  <!-- Fader Track 1 -->
+  <rect x="48" y="38" width="4" height="116" rx="2" fill="#1F2937"/>
+  <rect x="48" y="90" width="4" height="64" rx="2" fill="url(#primaryGrad192)"/>
+  <rect x="40" y="82" width="20" height="12" rx="3" fill="#111827" stroke="#06B6D4" stroke-width="1.5"/>
+
+  <!-- Fader Track 2 (Center) -->
+  <rect x="94" y="38" width="4" height="116" rx="2" fill="#1F2937"/>
+  <rect x="94" y="56" width="4" height="98" rx="2" fill="url(#accentGrad192)"/>
+  <rect x="86" y="50" width="20" height="12" rx="3" fill="#111827" stroke="#FF7700" stroke-width="1.5"/>
+
+  <!-- Fader Track 3 -->
+  <rect x="140" y="38" width="4" height="116" rx="2" fill="#1F2937"/>
+  <rect x="140" y="108" width="4" height="46" rx="2" fill="url(#primaryGrad192)"/>
+  <rect x="132" y="100" width="20" height="12" rx="3" fill="#111827" stroke="#06B6D4" stroke-width="1.5"/>
+
+  <!-- Soundwave -->
+  <path d="M 30,120 Q 50,82 70,100 T 96,48 T 122,106 T 162,86" fill="none" stroke="#22D3EE" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+</svg>

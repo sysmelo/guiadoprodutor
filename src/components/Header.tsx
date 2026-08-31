@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavigationTab, Project } from '../types';
-import { Activity, Clock, Sliders, AudioWaveform, Disc3, ShieldCheck, Keyboard, Github } from 'lucide-react';
+import { Activity, Clock, AudioWaveform, Disc3, Keyboard, Github, Download, Wifi, WifiOff } from 'lucide-react';
+import { usePWA } from '../hooks/usePWA';
 
 interface HeaderProps {
   currentTab: NavigationTab;
@@ -23,6 +24,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenShortcuts,
   onOpenGitHubExport
 }) => {
+  const { isOnline, isInstalled, canInstall, handleInstallApp } = usePWA();
+
   return (
     <nav className="flex items-center justify-between px-6 py-3 bg-[#15191E] border-b border-[#2A2F36] shrink-0 select-none z-20">
       {/* Brand Title */}
@@ -34,27 +37,45 @@ export const Header: React.FC<HeaderProps> = ({
           <h1 className="text-lg font-bold tracking-tight text-white leading-none">
             MELO <span className="text-cyan-400">MIX & MASTER</span>
           </h1>
-          <p className="text-[10px] text-gray-400 tracking-wide mt-0.5">FL STUDIO AUDIO SUITE</p>
+          <p className="text-[10px] text-gray-400 tracking-wide mt-0.5">FL STUDIO & STUDIO ONE SUITE</p>
         </div>
       </div>
 
       {/* Right Tools & Status Indicators */}
       <div className="flex items-center gap-3 sm:gap-5">
-        {/* Offline Status */}
-        <div className="hidden lg:flex items-center gap-2 bg-[#0B0E11] px-3 py-1.5 rounded border border-[#2A2F36]">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold">Status:</span>
-          <span className="text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            OFFLINE MODE
-          </span>
+        {/* Offline / PWA Status Badge */}
+        <div className="hidden lg:flex items-center gap-2 bg-[#0B0E11] px-3 py-1.5 rounded-lg border border-[#2A2F36]">
+          {isOnline ? (
+            <span className="text-[11px] font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+              <Wifi className="w-3.5 h-3.5 text-emerald-400" />
+              <span>ONLINE • CACHE PRONTO</span>
+            </span>
+          ) : (
+            <span className="text-[11px] font-mono text-amber-400 font-bold flex items-center gap-1.5">
+              <WifiOff className="w-3.5 h-3.5 text-amber-400" />
+              <span>MODO OFFLINE ATIVO</span>
+            </span>
+          )}
         </div>
+
+        {/* Install PWA Button (if browser prompt available) */}
+        {canInstall && !isInstalled && (
+          <button
+            onClick={handleInstallApp}
+            className="flex items-center gap-1.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow-md shadow-cyan-500/20 transition-all cursor-pointer animate-pulse"
+            title="Instalar como aplicativo no computador / celular"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>Instalar App</span>
+          </button>
+        )}
 
         {/* Quick Studio Tools */}
         <div className="hidden md:flex items-center gap-2">
           {onOpenShortcuts && (
             <button
               onClick={onOpenShortcuts}
-              className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-cyan-400 px-2.5 py-1.5 rounded border border-[#2A2F36] hover:border-cyan-500/50 text-xs transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-cyan-400 px-2.5 py-1.5 rounded-lg border border-[#2A2F36] hover:border-cyan-500/50 text-xs transition-colors cursor-pointer"
               title="Atalhos Globais (Ctrl + / ou ?)"
             >
               <Keyboard className="w-3.5 h-3.5 text-cyan-400" />
@@ -64,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
           )}
           <button
             onClick={onOpenAnalyzer}
-            className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-cyan-400 px-3 py-1.5 rounded border border-[#2A2F36] hover:border-cyan-500/50 text-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-cyan-400 px-3 py-1.5 rounded-lg border border-[#2A2F36] hover:border-cyan-500/50 text-xs transition-colors cursor-pointer"
             title="Analisador FFT (Ctrl + F)"
           >
             <Activity className="w-3.5 h-3.5 text-cyan-400" />
@@ -72,7 +93,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
           <button
             onClick={onOpenDelayCalc}
-            className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-orange-400 px-3 py-1.5 rounded border border-[#2A2F36] hover:border-orange-500/50 text-xs transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-orange-400 px-3 py-1.5 rounded-lg border border-[#2A2F36] hover:border-orange-500/50 text-xs transition-colors cursor-pointer"
             title="Calculadora BPM / ms (Ctrl + D)"
           >
             <Clock className="w-3.5 h-3.5 text-orange-400" />
@@ -81,11 +102,11 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenGitHubExport && (
             <button
               onClick={onOpenGitHubExport}
-              className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-white px-2.5 py-1.5 rounded border border-cyan-500/40 hover:border-cyan-400 text-xs transition-colors cursor-pointer"
-              title="Preparar e Exportar para GitHub"
+              className="flex items-center gap-1.5 bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 hover:text-white px-2.5 py-1.5 rounded-lg border border-cyan-500/40 hover:border-cyan-400 text-xs transition-colors cursor-pointer"
+              title="Preparar e Exportar para GitHub / Netlify"
             >
               <Github className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="hidden xl:inline">GitHub</span>
+              <span className="hidden xl:inline">Exportar</span>
             </button>
           )}
         </div>
@@ -114,5 +135,3 @@ export const Header: React.FC<HeaderProps> = ({
     </nav>
   );
 };
-
-

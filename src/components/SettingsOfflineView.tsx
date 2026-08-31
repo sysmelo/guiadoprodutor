@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { 
   Settings, 
   WifiOff, 
+  Wifi,
   HardDrive, 
   Keyboard, 
   ShieldCheck, 
@@ -25,7 +26,11 @@ import {
   HelpCircle,
   FolderDown,
   ArrowRight,
-  Database
+  Database,
+  Globe,
+  Monitor,
+  Check,
+  Zap
 } from 'lucide-react';
 import { Project } from '../types';
 import { 
@@ -40,16 +45,18 @@ import {
   LocalSnapshot 
 } from '../utils/backupManager';
 import { getSavedProjects } from '../utils/audioCalculator';
+import { usePWA } from '../hooks/usePWA';
 
 interface SettingsOfflineViewProps {
   onResetData: () => void;
   onProjectsUpdated?: (projects: Project[]) => void;
 }
 
-type SettingsSection = 'backup_export' | 'shortcuts_guide' | 'system_info';
+type SettingsSection = 'backup_export' | 'pwa_offline' | 'shortcuts_guide' | 'system_info';
 
 export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onResetData, onProjectsUpdated }) => {
   const [activeSection, setActiveSection] = useState<SettingsSection>('backup_export');
+  const { isOnline, isInstalled, swActive, canInstall, handleInstallApp } = usePWA();
   const [snapshots, setSnapshots] = useState<LocalSnapshot[]>(() => getLocalSnapshots());
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
   const [isRawJsonModalOpen, setIsRawJsonModalOpen] = useState(false);
@@ -326,6 +333,21 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
           <span>Exportar & Migrar Projetos (JSON)</span>
           <span className="text-[10px] font-mono bg-cyan-500/20 text-cyan-300 px-1.5 py-0.2 rounded font-bold">
             {currentProjects.length}
+          </span>
+        </button>
+
+        <button
+          onClick={() => setActiveSection('pwa_offline')}
+          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+            activeSection === 'pwa_offline'
+              ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.15)]'
+              : 'text-gray-400 hover:text-gray-200 hover:bg-[#15191E]'
+          }`}
+        >
+          <Monitor className="w-4 h-4 text-emerald-400" />
+          <span>Modo Offline PWA & Netlify</span>
+          <span className="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-1.5 py-0.2 rounded font-bold">
+            {isOnline ? 'ONLINE' : 'OFFLINE'}
           </span>
         </button>
 
@@ -706,6 +728,154 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION: PWA OFFLINE & NETLIFY STATUS */}
+      {activeSection === 'pwa_offline' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Realtime Diagnostic Bar */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Status 1: Internet Connection */}
+            <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                  isOnline 
+                    ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' 
+                    : 'bg-amber-500/15 text-amber-400 border-amber-500/30'
+                }`}>
+                  {isOnline ? <Wifi className="w-5 h-5" /> : <WifiOff className="w-5 h-5" />}
+                </div>
+                <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-full border ${
+                  isOnline 
+                    ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' 
+                    : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                }`}>
+                  {isOnline ? 'CONECTADO' : 'OFFLINE'}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Status da Rede</h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  {isOnline 
+                    ? 'Conexão ativa. Pronto para baixar atualizações e sincronizar cache.' 
+                    : 'Sem internet. O aplicativo está rodando 100% no cache local do computador.'}
+                </p>
+              </div>
+            </div>
+
+            {/* Status 2: Service Worker & Cache */}
+            <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+                  <HardDrive className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-mono font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-full border border-cyan-500/20">
+                  {swActive ? 'ATIVO NO DISCO' : 'REGISTRADO'}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Service Worker & Cache Storage</h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Arquivos HTML, scripts, calculadoras e ferramentas gravados na memória offline permanente.
+                </p>
+              </div>
+            </div>
+
+            {/* Status 3: PWA Standalone Mode */}
+            <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30">
+                  <Monitor className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-mono font-bold text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-full border border-purple-500/20">
+                  {isInstalled ? 'APP INSTALADO' : 'PRONTO P/ INSTALAR'}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Modo Aplicativo Nativo</h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  {isInstalled 
+                    ? 'Rodando como aplicativo independente na sua área de trabalho/sistema.' 
+                    : 'Pode ser instalado no computador para abrir direto sem digitar link no navegador.'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Solution & Explanation Card: Netlify Offline Fix */}
+          <div className="rounded-2xl bg-gradient-to-br from-[#12161E] via-[#161C26] to-[#12161E] border-2 border-emerald-500/40 p-6 space-y-5 shadow-2xl relative overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#242A34] pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center border border-emerald-500/40 shrink-0">
+                  <Zap className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-white tracking-tight">
+                    Como Usar 100% Offline no Netlify (guiadoprodutor.netlify.app)
+                  </h2>
+                  <p className="text-xs text-emerald-400 font-semibold mt-0.5">
+                    Solução definitiva para a tela do dinossauro (ERR_INTERNET_DISCONNECTED)
+                  </p>
+                </div>
+              </div>
+
+              {/* Install Button Trigger */}
+              {canInstall && !isInstalled && (
+                <button
+                  onClick={handleInstallApp}
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-black font-extrabold text-xs shadow-lg transition-all flex items-center gap-2 cursor-pointer shrink-0"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Instalar App no Computador</span>
+                </button>
+              )}
+            </div>
+
+            {/* Step-by-Step Practical Guide */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-[#0B0E11] rounded-xl border border-[#222730] space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-cyan-500 text-black font-extrabold text-xs flex items-center justify-center">1</span>
+                  <span className="text-xs font-bold text-white">Abra 1 Vez Conectado</span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  Acesse <span className="text-cyan-400 font-mono">guiadoprodutor.netlify.app</span> uma vez com internet. O navegador salva automaticamente o Service Worker e todos os módulos de mixagem no cache local.
+                </p>
+              </div>
+
+              <div className="p-4 bg-[#0B0E11] rounded-xl border border-[#222730] space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-emerald-500 text-black font-extrabold text-xs flex items-center justify-center">2</span>
+                  <span className="text-xs font-bold text-white">Instale como App (PWA)</span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  Clique no botão <strong className="text-emerald-400">"Instalar App"</strong> no topo da tela ou no ícone de instalação do Google Chrome na barra de endereços para criar um atalho na Área de Trabalho.
+                </p>
+              </div>
+
+              <div className="p-4 bg-[#0B0E11] rounded-xl border border-[#222730] space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-full bg-purple-500 text-white font-extrabold text-xs flex items-center justify-center">3</span>
+                  <span className="text-xs font-bold text-white">Use no Estúdio Sem Wi-Fi</span>
+                </div>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  Desligue a internet completamente. Ao abrir o aplicativo ou recarregar a página, o Service Worker serve o app direto do seu SSD sem depender dos servidores do Netlify.
+                </p>
+              </div>
+            </div>
+
+            {/* Didactic Explanation Box */}
+            <div className="p-4 bg-[#15191E] rounded-xl border border-[#2A2F36] space-y-2 text-xs">
+              <span className="font-bold text-amber-400 flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4" />
+                Por que a tela do dinossauro apareceu antes?
+              </span>
+              <p className="text-gray-300 leading-relaxed">
+                Antes do Service Worker ser configurado, o navegador tentava enviar uma solicitação HTTP online para os servidores do Netlify para buscar a página. Sem conexão, o navegador falhava. Com o novo <strong>Service Worker (sw.js)</strong> e o <strong>Manifest PWA</strong>, a aplicação é interceptada antes mesmo de sair do computador e carregada instantaneamente do cache local.
+              </p>
             </div>
           </div>
         </div>

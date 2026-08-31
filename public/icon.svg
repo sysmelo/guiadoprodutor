@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1116"/>
+      <stop offset="100%" stop-color="#050709"/>
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7700"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle -->
+  <rect width="512" height="512" rx="112" fill="url(#bgGrad)"/>
+  <rect x="6" y="6" width="500" height="500" rx="106" fill="none" stroke="url(#primaryGrad)" stroke-width="4" stroke-opacity="0.4"/>
+
+  <!-- Mixer Channel Grids / EQ Waveform -->
+  <g opacity="0.15" stroke="#FFFFFF" stroke-width="2">
+    <line x1="80" y1="120" x2="432" y2="120" stroke-dasharray="6,6"/>
+    <line x1="80" y1="200" x2="432" y2="200" stroke-dasharray="6,6"/>
+    <line x1="80" y1="280" x2="432" y2="280" stroke-dasharray="6,6"/>
+    <line x1="80" y1="360" x2="432" y2="360" stroke-dasharray="6,6"/>
+  </g>
+
+  <!-- Studio Graphic: Stylized M & Sliders & Headphones -->
+  <!-- Fader Track 1 -->
+  <rect x="130" y="100" width="8" height="312" rx="4" fill="#1F2937"/>
+  <rect x="130" y="240" width="8" height="172" rx="4" fill="url(#primaryGrad)"/>
+  <rect x="110" y="220" width="48" height="28" rx="8" fill="#111827" stroke="#06B6D4" stroke-width="3" filter="url(#glow)"/>
+  <line x1="120" y1="234" x2="148" y2="234" stroke="#06B6D4" stroke-width="3"/>
+
+  <!-- Fader Track 2 (Center - High Peak) -->
+  <rect x="252" y="100" width="8" height="312" rx="4" fill="#1F2937"/>
+  <rect x="252" y="150" width="8" height="262" rx="4" fill="url(#accentGrad)"/>
+  <rect x="232" y="136" width="48" height="28" rx="8" fill="#111827" stroke="#FF7700" stroke-width="3" filter="url(#glow)"/>
+  <line x1="242" y1="150" x2="270" y2="150" stroke="#FF7700" stroke-width="3"/>
+
+  <!-- Fader Track 3 -->
+  <rect x="374" y="100" width="8" height="312" rx="4" fill="#1F2937"/>
+  <rect x="374" y="290" width="8" height="122" rx="4" fill="url(#primaryGrad)"/>
+  <rect x="354" y="276" width="48" height="28" rx="8" fill="#111827" stroke="#06B6D4" stroke-width="3" filter="url(#glow)"/>
+  <line x1="364" y1="290" x2="392" y2="290" stroke="#06B6D4" stroke-width="3"/>
+
+  <!-- Soundwave / Frequency Curve on top -->
+  <path d="M 80,320 Q 130,220 180,270 T 256,130 T 330,280 T 432,230" fill="none" stroke="#22D3EE" stroke-width="6" stroke-linecap="round" opacity="0.85" filter="url(#glow)"/>
+
+  <!-- LED VU Meter Dots -->
+  <circle cx="134" cy="80" r="5" fill="#10B981"/>
+  <circle cx="256" cy="80" r="5" fill="#EF4444" filter="url(#glow)"/>
+  <circle cx="378" cy="80" r="5" fill="#10B981"/>
+</svg>

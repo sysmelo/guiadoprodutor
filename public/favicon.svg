@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="bgFav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0E1116"/>
+      <stop offset="100%" stop-color="#050709"/>
+    </linearGradient>
+    <linearGradient id="cyanFav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="orangeFav" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF7700"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="14" fill="url(#bgFav)"/>
+  <rect x="1" y="1" width="62" height="62" rx="13" fill="none" stroke="url(#cyanFav)" stroke-width="1.5" stroke-opacity="0.6"/>
+
+  <rect x="16" y="12" width="2" height="40" rx="1" fill="#374151"/>
+  <rect x="16" y="28" width="2" height="24" rx="1" fill="url(#cyanFav)"/>
+  <rect x="12" y="25" width="10" height="6" rx="1.5" fill="#1F2937" stroke="#06B6D4" stroke-width="1"/>
+
+  <rect x="31" y="12" width="2" height="40" rx="1" fill="#374151"/>
+  <rect x="31" y="18" width="2" height="34" rx="1" fill="url(#orangeFav)"/>
+  <rect x="27" y="16" width="10" height="6" rx="1.5" fill="#1F2937" stroke="#FF7700" stroke-width="1"/>
+
+  <rect x="46" y="12" width="2" height="40" rx="1" fill="#374151"/>
+  <rect x="46" y="34" width="2" height="18" rx="1" fill="url(#cyanFav)"/>
+  <rect x="42" y="31" width="10" height="6" rx="1.5" fill="#1F2937" stroke="#06B6D4" stroke-width="1"/>
+</svg>
