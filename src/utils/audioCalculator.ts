@@ -77,6 +77,38 @@ const ACTIVE_PROJECT_KEY = 'melo_mix_master_active_project';
 
 export const defaultDemoProjects = [
   {
+    id: 'proj-kuduro-1',
+    name: 'Kuduro na Batida de Luanda',
+    artist: 'Melo & Os Reis do Kuduro',
+    genre: 'Kuduro (Batida / Luanda)',
+    bpm: 140,
+    key: 'F# Menor',
+    date: '2026-08-30',
+    deadline: '2026-09-05',
+    priority: 'Alta' as const,
+    processLevel: 'Nível 2: Mixagem' as const,
+    status: 'Em Mixagem' as const,
+    notes: 'Batida 4x4 rápida a 140 BPM com Dikanza (reco-reco angolano), apitos rítmicos, tarolas secas e 808 agressivo. Dobras vocais abertas em L/R 45% com saturação de médios.',
+    checklist: {
+      'chk-prep-1': true,
+      'chk-prep-2': true,
+      'chk-prep-3': true,
+      'chk-prep-4': true,
+      'chk-prep-5': false,
+      'chk-prep-6': false,
+      'chk-prep-7': false,
+      'chk-prep-8': false
+    },
+    mixProgress: 50,
+    masterChecklist: {
+      'chk-1': false,
+      'chk-2': false
+    },
+    exportNotes: 'Master com Soft Clipper para pegada punchy de pista (-9 LUFS) + Instrumental e Acapella Stems.',
+    referenceTracks: 'Os Kuduristas / Nagrelha / Cabo Snoop / Noite & Dia',
+    clientContact: '+244 923 888 777 (WhatsApp Studio)'
+  },
+  {
     id: 'proj-1',
     name: 'Sabor de Luanda',
     artist: 'Melo & Banda',

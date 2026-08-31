@@ -14,10 +14,14 @@ import {
   Flame,
   HelpCircle
 } from 'lucide-react';
-import { GenreChain, GenreMode } from '../types';
+import { GenreChain, GenreMode, NavigationTab } from '../types';
 import { getAllGenres, saveCustomGenre, deleteCustomGenre, getCustomGenres } from '../utils/genresManager';
 
-export const GenresView: React.FC = () => {
+interface GenresViewProps {
+  onNavigate?: (tab: NavigationTab) => void;
+}
+
+export const GenresView: React.FC<GenresViewProps> = ({ onNavigate }) => {
   const [genresList, setGenresList] = useState<GenreChain[]>(() => getAllGenres());
   const [selectedGenreId, setSelectedGenreId] = useState<string>(() => {
     const all = getAllGenres();
@@ -438,6 +442,26 @@ export const GenresView: React.FC = () => {
                 </div>
               ))}
             </div>
+
+            {/* Direct Create Project Button */}
+            {onNavigate && (
+              <button
+                type="button"
+                onClick={() => onNavigate('projects')}
+                className={`w-full py-3 px-4 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 shadow-lg cursor-pointer ${
+                  currentGenre.id === 'kuduro'
+                    ? 'bg-amber-500 hover:bg-amber-400 text-black border border-amber-300 shadow-amber-500/20'
+                    : 'bg-cyan-500 hover:bg-cyan-400 text-black border border-cyan-300 shadow-cyan-500/20'
+                }`}
+              >
+                {currentGenre.id === 'kuduro' ? (
+                  <Flame className="w-4 h-4 text-black fill-black" />
+                ) : (
+                  <Plus className="w-4 h-4 text-black" />
+                )}
+                <span>CRIAR PROJETO DE {currentGenre.name.toUpperCase()} NO ESTÚDIO →</span>
+              </button>
+            )}
           </div>
 
           {/* Mode Switcher (Clean vs Modern vs Aggressive) */}

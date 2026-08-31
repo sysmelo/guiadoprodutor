@@ -267,7 +267,7 @@ export const App: React.FC = () => {
           )}
 
           {currentTab === 'genres' && (
-            <GenresView />
+            <GenresView onNavigate={setCurrentTab} />
           )}
 
           {currentTab === 'master' && (
@@ -308,6 +308,13 @@ export const App: React.FC = () => {
           {currentTab === 'settings' && (
             <SettingsOfflineView
               onResetData={handleResetData}
+              onProjectsUpdated={(newProjects) => {
+                setProjects(newProjects);
+                if (newProjects.length > 0) {
+                  setActiveId(newProjects[0].id);
+                  setActiveProjectId(newProjects[0].id);
+                }
+              }}
             />
           )}
         </main>

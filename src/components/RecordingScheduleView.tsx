@@ -498,15 +498,60 @@ export const RecordingScheduleView: React.FC<RecordingScheduleViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="text-gray-400 font-bold block mb-1">Estilo Musical (Gênero)</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-cyan-400 font-bold block">Estilo Musical (Gênero) *</label>
+                    {formGenre.toLowerCase().includes('kuduro') && (
+                      <span className="text-[10px] font-mono text-amber-400 font-bold flex items-center gap-1">
+                        <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        Kuduro de Luanda
+                      </span>
+                    )}
+                  </div>
                   <select
                     value={formGenre}
-                    onChange={(e) => setFormGenre(e.target.value)}
-                    className="w-full bg-[#0B0E11] border border-[#2A2F36] rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-cyan-500 cursor-pointer"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setFormGenre(val);
+                      if (val.toLowerCase().includes('kuduro')) setFormBpm(140);
+                      else if (val.toLowerCase().includes('semba')) setFormBpm(105);
+                      else if (val.toLowerCase().includes('tarraxinha')) setFormBpm(88);
+                      else if (val.toLowerCase().includes('afrobeat')) setFormBpm(104);
+                      else if (val.toLowerCase().includes('amapiano')) setFormBpm(113);
+                      else if (val.toLowerCase().includes('trap')) setFormBpm(140);
+                      else if (val.toLowerCase().includes('drill')) setFormBpm(142);
+                    }}
+                    className="w-full bg-[#0B0E11] border border-cyan-500/50 rounded-lg px-3 py-2.5 text-white font-medium focus:outline-none focus:border-cyan-400 cursor-pointer"
                   >
-                    {allGenresList.map(g => (
-                      <option key={g.id} value={g.name}>{g.name}</option>
-                    ))}
+                    <optgroup label="🇦🇴 Ritmos Angolanos & Africanos">
+                      <option value="Kuduro (Batida / Luanda)">🇦🇴 Kuduro (Batida / Luanda) — 135-145 BPM</option>
+                      <option value="Semba & Ritmos Tradicionais">🇦🇴 Semba & Ritmos Tradicionais — 95-115 BPM</option>
+                      <option value="Tarraxinha & Tarraxo">🇦🇴 Tarraxinha & Tarraxo — 82-94 BPM</option>
+                      <option value="Afrobeat">🌍 Afrobeat — 98-112 BPM</option>
+                      <option value="Amapiano">🇿🇦 Amapiano — 110-118 BPM</option>
+                      <option value="Kizomba & Ghetto Zouk">🇦🇴 Kizomba & Ghetto Zouk — 88-98 BPM</option>
+                      <option value="Afro House">🌍 Afro House — 120-126 BPM</option>
+                    </optgroup>
+
+                    <optgroup label="🎧 Urban, Trap & Hip-Hop">
+                      <option value="Trap">🔥 Trap — 130-160 BPM</option>
+                      <option value="Drill (UK / NY / Afro Drill)">🇬🇧 Drill (UK / NY / Afro Drill) — 138-148 BPM</option>
+                      <option value="Hip Hop / Boombap">🎙️ Hip Hop / Boombap — 85-98 BPM</option>
+                      <option value="R&B / Soul Contemporâneo">💜 R&B / Soul Contemporâneo — 65-95 BPM</option>
+                      <option value="Dancehall">🇯🇲 Dancehall — 95-110 BPM</option>
+                      <option value="Reggaeton">🌴 Reggaeton — 88-100 BPM</option>
+                    </optgroup>
+
+                    <optgroup label="🎛️ Pop, Eletrônica & Outros">
+                      <option value="Pop Comercial">✨ Pop Comercial — 105-128 BPM</option>
+                      <option value="Deep House">🎧 Deep House — 120-125 BPM</option>
+                      <option value="EDM / House">⚡ EDM / House — 124-130 BPM</option>
+                      <option value="Funk Brasileiro">🇧🇷 Funk Brasileiro — 128-135 BPM</option>
+                      <option value="Rock / Indie">🎸 Rock / Indie — 110-140 BPM</option>
+                      <option value="Sertanejo">🤠 Sertanejo — 110-130 BPM</option>
+                      <option value="Lo-Fi">☕ Lo-Fi Hip Hop — 75-88 BPM</option>
+                      <option value="Gospel">🙏 Gospel / Worship — 68-95 BPM</option>
+                      <option value="Zouk & Retro Zouk">🏝️ Zouk & Retro Zouk — 90-102 BPM</option>
+                    </optgroup>
                   </select>
                 </div>
 
