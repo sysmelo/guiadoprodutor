@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { NavigationTab, Project, ProcessLevel } from '../types';
 import { getProjectDeadlineStatus } from '../utils/audioCalculator';
+import { SmartGenreTips } from './SmartGenreTips';
 
 interface DashboardViewProps {
   onNavigate: (tab: NavigationTab) => void;
@@ -192,6 +193,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* SMART GENRE TIPS: Tailored Audio Engineering Techniques */}
+      <SmartGenreTips
+        activeProject={activeProject}
+        onNavigate={onNavigate}
+        onOpenDelayCalc={onOpenDelayCalc}
+        onOpenAnalyzer={onOpenAnalyzer}
+      />
 
       {/* PRO WORKFLOW BANNERS: FL STUDIO & STUDIO ONE 7 SUITES */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
