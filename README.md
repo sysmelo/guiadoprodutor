@@ -77,7 +77,28 @@ npm run build
 
 ---
 
+## 🌐 Como Subir no Netlify (Deploy Instantâneo)
+
+Este projeto já está 100% configurado para o **Netlify** com `netlify.toml`, `public/_redirects` (evita erro 404 em SPA) e `public/_headers` (HTTPS & Cache otimizado).
+
+### Opção 1: Via GitHub (Recomendado)
+1. Suba o código para o seu repositório no GitHub.
+2. Acesse [Netlify](https://app.netlify.com) e clique em **"Add new site" > "Import an existing project"**.
+3. Conecte ao GitHub e selecione este repositório.
+4. O Netlify detectará automaticamente as configurações do `netlify.toml`:
+   - **Build command**: `npm run build`
+   - **Publish directory**: `dist`
+5. Clique em **"Deploy Site"**.
+
+### Opção 2: Netlify Drop (Arrastar Pasta)
+1. Execute `npm run build` na sua máquina.
+2. Acesse [app.netlify.com/drop](https://app.netlify.com/drop).
+3. Arraste a pasta gerada **`dist`** direto para a janela do navegador.
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
+
 
 - **React 18** com TypeScript
 - **Tailwind CSS v4**

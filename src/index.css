@@ -76,4 +76,19 @@
   );
 }
 
+/* Sidebar Glowing Shimmers & Neon Borders */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.02); }
+}
+
+.sidebar-glow-pulse {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.glow-pill {
+  box-shadow: 0 0 12px currentColor;
+}
+
+
 

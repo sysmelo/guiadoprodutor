@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { getProjectDeadlineStatus } from '../utils/audioCalculator';
 import { getAllGenres } from '../utils/genresManager';
+import { exportAllProjectsToJson, validateBackupContent, restoreBackup } from '../utils/backupManager';
 import { GitHubExportModal } from './GitHubExportModal';
 
 interface ProjectsViewProps {
@@ -225,13 +226,12 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
   };
 
   const handleExportBackup = () => {
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projects, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `melo_studio_projects_backup_${new Date().toISOString().slice(0, 10)}.json`);
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
+    try {
+      const res = exportAllProjectsToJson();
+      alert(`Exportação concluída! Arquivo "${res.fileName}" baixado com ${res.count} projeto(s).`);
+    } catch {
+      alert('Falha ao exportar projetos em JSON.');
+    }
   };
 
   const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -241,13 +241,25 @@ export const ProjectsView: React.FC<ProjectsViewProps> = ({
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const parsed = JSON.parse(event.target?.result as string);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          onSaveProjects(parsed);
-          onSelectProject(parsed[0].id);
-          alert('Projetos restaurados com sucesso do arquivo JSON!');
+        const raw = event.target?.result as string;
+        const validation = validateBackupContent(raw);
+        if (!validation.valid) {
+          alert(validation.error || 'Arquivo JSON inválido.');
+          return;
         }
-      } catch (err) {
+        if (validation.data) {
+          const res = restoreBackup(validation.data, 'replace');
+          if (res.success) {
+            onSaveProjects(validation.data.projects);
+            if (validation.data.projects.length > 0) {
+              onSelectProject(validation.data.projects[0].id);
+            }
+            alert(`Restauração concluída! ${validation.data.projects.length} projeto(s) carregados.`);
+          } else {
+            alert(res.message);
+          }
+        }
+      } catch {
         alert('Erro ao importar arquivo JSON de backup.');
       }
     };

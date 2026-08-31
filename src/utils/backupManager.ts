@@ -66,6 +66,41 @@ export function downloadBackupFile(customName?: string) {
 }
 
 /**
+ * Dedicated function to export all projects into a local JSON file for easy backup and migration
+ */
+export function exportAllProjectsToJson(customName?: string) {
+  const projects = getSavedProjects();
+  const dateStr = new Date().toISOString().slice(0, 10);
+  const fileName = customName || `melo_projetos_estudio_${dateStr}.json`;
+
+  const payload = {
+    schemaVersion: '1.2.0',
+    type: 'MELO_ALL_PROJECTS_BACKUP',
+    exportedAt: new Date().toISOString(),
+    appName: 'Melo Mix & Master Assistant - Studio One 7 & FL Studio Edition',
+    stats: {
+      totalProjects: projects.length,
+      genresIncluded: Array.from(new Set(projects.map(p => p.genre))),
+      totalMixChecks: projects.reduce((acc, p) => acc + (p.checklist ? Object.keys(p.checklist).length : 0), 0)
+    },
+    projects,
+    activeProjectId: getActiveProjectId(),
+  };
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  
+  return { success: true, count: projects.length, fileName };
+}
+
+/**
  * Export a single project to a portable .meloproj JSON file
  */
 export function downloadSingleProjectFile(project: Project) {
