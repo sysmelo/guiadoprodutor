@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "projects": {
+      "title": "Projects",
+      "description": "Lista de projetos musicais, checklists de mixagem, masterização e agendamentos",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "artist": { "type": "string" },
+        "genre": { "type": "string" },
+        "bpm": { "type": "number" },
+        "key": { "type": "string" },
+        "date": { "type": "string" },
+        "deadline": { "type": "string" },
+        "priority": { "type": "string" },
+        "processLevel": { "type": "string" },
+        "status": { "type": "string" },
+        "notes": { "type": "string" },
+        "mixProgress": { "type": "number" },
+        "checklist": { "type": "object" },
+        "masterChecklist": { "type": "object" },
+        "exportNotes": { "type": "string" },
+        "referenceTracks": { "type": "string" },
+        "clientContact": { "type": "string" },
+        "deliveryFormat": { "type": "string" },
+        "instrumentalDate": { "type": "string" },
+        "instrumentalStatus": { "type": "string" },
+        "recordingDate": { "type": "string" },
+        "recordingTime": { "type": "string" },
+        "recordingEndTime": { "type": "string" },
+        "recordingStatus": { "type": "string" },
+        "recordingMic": { "type": "string" },
+        "recordingRoom": { "type": "string" },
+        "recordingEngineer": { "type": "string" },
+        "recordingType": { "type": "string" },
+        "recordingNotes": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "projects",
+      "description": "Projetos de mixagem, masterização e sessões de estúdio com sincronização em nuvem e cache local offline"
+    }
+  }
+}

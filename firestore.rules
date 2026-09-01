@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir leitura e escrita para todos no assistente de estúdio musical (projetos, sessões de gravação, checklists)
+    match /projects/{projectId} {
+      allow read, write: if true;
+    }
+  }
+}

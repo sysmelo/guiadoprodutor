@@ -58,14 +58,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   });
 
   return (
-    <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
+    <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-200">
       
       {/* CRITICAL OVERDUE ALERT BANNER (If any project is overdue) */}
       {overdueList.length > 0 && (
-        <div className="p-4 rounded-xl bg-red-500/10 border-2 border-red-500/40 text-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-red-500/10 border-2 border-red-500/40 text-red-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-red-500 text-black flex items-center justify-center font-bold shrink-0">
-              <AlertTriangle className="w-5 h-5" />
+            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-red-500 text-black flex items-center justify-center font-bold shrink-0">
+              <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
             <div>
               <h4 className="text-xs font-bold text-white uppercase font-mono tracking-wider">
@@ -87,30 +87,30 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
       {/* ACTIVE PROJECT PROCESS PIPELINE MONITOR */}
       {activeProject && (
-        <div className="rounded-2xl bg-[#15191E] border border-cyan-500/40 p-5 md:p-6 shadow-xl space-y-4">
+        <div className="rounded-2xl bg-[#15191E] border border-cyan-500/40 p-4 sm:p-5 md:p-6 shadow-xl space-y-3 sm:space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#2A2F36] pb-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0">
                 <FolderKanban className="w-5 h-5" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-                    SESSÃO ATIVA NO ESTÚDIO
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[9px] sm:text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
+                    SESSÃO ATIVA
                   </span>
                   {activeDeadlineStatus && (
-                    <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${activeDeadlineStatus.badgeColor}`}>
+                    <span className={`text-[9px] sm:text-[10px] font-mono px-2 py-0.5 rounded border ${activeDeadlineStatus.badgeColor}`}>
                       {activeDeadlineStatus.label}
                     </span>
                   )}
                 </div>
-                <h3 className="text-lg md:text-xl font-extrabold text-white mt-0.5">
-                  {activeProject.name} — <span className="text-gray-400 font-normal text-sm">{activeProject.artist}</span>
+                <h3 className="text-base sm:text-lg md:text-xl font-extrabold text-white mt-0.5 truncate">
+                  {activeProject.name} — <span className="text-gray-400 font-normal text-xs sm:text-sm">{activeProject.artist}</span>
                 </h3>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => onNavigate('projects')}
                 className="px-3 py-1.5 rounded-lg bg-[#0B0E11] hover:bg-[#1E2329] text-gray-300 text-xs font-semibold border border-[#2A2F36] transition-colors cursor-pointer flex items-center gap-1.5"
@@ -124,11 +124,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           {/* 4-Stage Process Progress Deck */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-mono">
-              <span className="text-gray-400">Pipeline de Produção do Projeto:</span>
-              <span className="text-cyan-400 font-bold">{activeProcessLevel}</span>
+              <span className="text-gray-400 text-[11px] sm:text-xs">Pipeline de Produção:</span>
+              <span className="text-cyan-400 font-bold text-[11px] sm:text-xs">{activeProcessLevel}</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { 
                   id: 'Nível 1: Gravação / Pré-Mix', 

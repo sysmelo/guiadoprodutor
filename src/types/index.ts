@@ -102,9 +102,34 @@ export interface RecordingScheduleItem {
   notes?: string;
 }
 
-export type PluginType = 'FL Native' | 'FabFilter' | 'Free External' | 'Other External';
+export type PluginType = 
+  | 'FL Native' 
+  | 'Studio One Native' 
+  | 'FabFilter' 
+  | 'Waves Audio' 
+  | 'Soundtoys' 
+  | 'iZotope' 
+  | 'Slate Digital' 
+  | 'Universal Audio' 
+  | 'Antares & Celemony' 
+  | 'Valhalla & Oeksound' 
+  | 'Free External' 
+  | 'Other External';
+
 export type PluginEcosystem = PluginType;
-export type PluginCategory = 'Equalizador' | 'Compressor' | 'De-Esser' | 'Saturação / Distorção' | 'Reverb & Espaço' | 'Delay' | 'Limiter & Clipper' | 'Analisador & Medição' | 'Stereo & Utility';
+
+export type PluginCategory = 
+  | 'Equalizador' 
+  | 'Compressor' 
+  | 'De-Esser' 
+  | 'Saturação / Distorção' 
+  | 'Reverb & Espaço' 
+  | 'Delay' 
+  | 'Limiter & Clipper' 
+  | 'Analisador & Medição' 
+  | 'Stereo & Utility'
+  | 'Afinação & Correção'
+  | 'Channel Strip';
 
 export interface AudioPlugin {
   id: string;
@@ -168,6 +193,8 @@ export interface InstrumentGuide {
   id: string;
   name: string;
   category: InstrumentCategory;
+  mixTarget?: 'VOCAL' | 'INSTRUMENTAL';
+  subCategory?: string;
   description?: string;
   freqFocus: {
     cut: string;
@@ -185,6 +212,10 @@ export interface InstrumentGuide {
   sidechainTip?: string;
   saturationRec: 'OFF' | 'SUAVE' | 'MÉDIA' | 'FORTE';
   flPluginChain: string[];
+  s1NativeChain?: string[];
+  wavesChain?: string[];
+  fabfilterChain?: string[];
+  hybridProChain?: string[];
   expertTips: string[];
 }
 

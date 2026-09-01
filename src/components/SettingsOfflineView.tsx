@@ -737,7 +737,7 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
       {activeSection === 'pwa_offline' && (
         <div className="space-y-6 animate-in fade-in">
           {/* Realtime Diagnostic Bar */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Status 1: Internet Connection */}
             <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
               <div className="flex items-center justify-between">
@@ -760,13 +760,31 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
                 <h3 className="text-sm font-bold text-white">Status da Rede</h3>
                 <p className="text-xs text-gray-400 mt-1">
                   {isOnline 
-                    ? 'Conexão ativa. Pronto para baixar atualizações e sincronizar cache.' 
+                    ? 'Conexão ativa. Sincronizando com o Firebase Firestore.' 
                     : 'Sem internet. O aplicativo está rodando 100% no cache local do computador.'}
                 </p>
               </div>
             </div>
 
-            {/* Status 2: Service Worker & Cache */}
+            {/* Status 2: Firebase Firestore Database */}
+            <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-10 h-10 rounded-xl bg-orange-500/15 text-orange-400 flex items-center justify-center border border-orange-500/30">
+                  <Database className="w-5 h-5" />
+                </div>
+                <span className="text-[10px] font-mono font-bold text-orange-400 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20">
+                  {isOnline ? 'NUVEM & OFFLINE' : 'OFFLINE INDEXEDDB'}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Firebase Firestore</h3>
+                <p className="text-xs text-gray-400 mt-1">
+                  Base de dados em nuvem com persistência multi-aba offline nativa (IndexedDB).
+                </p>
+              </div>
+            </div>
+
+            {/* Status 3: Service Worker & Cache */}
             <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-cyan-500/15 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
@@ -777,14 +795,14 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
                 </span>
               </div>
               <div>
-                <h3 className="text-sm font-bold text-white">Service Worker & Cache Storage</h3>
+                <h3 className="text-sm font-bold text-white">Service Worker & Cache</h3>
                 <p className="text-xs text-gray-400 mt-1">
-                  Arquivos HTML, scripts, calculadoras e ferramentas gravados na memória offline permanente.
+                  Arquivos HTML, scripts e calculadoras de áudio gravados no SSD local.
                 </p>
               </div>
             </div>
 
-            {/* Status 3: PWA Standalone Mode */}
+            {/* Status 4: PWA Standalone Mode */}
             <div className="p-5 rounded-2xl bg-[#12151A] border border-[#242A34] space-y-3 shadow-lg">
               <div className="flex items-center justify-between">
                 <div className="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-400 flex items-center justify-center border border-purple-500/30">
@@ -799,7 +817,7 @@ export const SettingsOfflineView: React.FC<SettingsOfflineViewProps> = ({ onRese
                 <p className="text-xs text-gray-400 mt-1">
                   {isInstalled 
                     ? 'Rodando como aplicativo independente na sua área de trabalho/sistema.' 
-                    : 'Pode ser instalado no computador para abrir direto sem digitar link no navegador.'}
+                    : 'Pode ser instalado no computador para abrir direto sem digitar link.'}
                 </p>
               </div>
             </div>

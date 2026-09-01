@@ -1,4 +1,5 @@
 // Audio Engineering Formulas & Utility Calculations for FL Studio Producers
+import { Project } from '../types';
 
 export interface DelayTiming {
   name: string;
@@ -75,7 +76,7 @@ export function calculateReverbSettings(bpm: number) {
 const STORAGE_KEY = 'melo_mix_master_projects_v3';
 const ACTIVE_PROJECT_KEY = 'melo_mix_master_active_project';
 
-export const defaultDemoProjects = [
+export const defaultDemoProjects: Project[] = [
   {
     id: 'proj-kuduro-1',
     name: 'Kuduro na Batida de Luanda',

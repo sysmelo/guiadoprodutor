@@ -267,7 +267,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-56 sm:w-64 bg-[#0E1116] border-r border-[#222731] flex flex-col shrink-0 select-none overflow-hidden h-full shadow-2xl">
+    <aside className="hidden md:flex w-56 lg:w-64 bg-[#0E1116] border-r border-[#222731] flex-col shrink-0 select-none overflow-hidden h-full shadow-2xl">
       {/* Navigation Links with Glowing Buttons */}
       <div className="p-2.5 space-y-3.5 flex-1 overflow-y-auto custom-scrollbar">
         {sections.map((sec, secIdx) => (

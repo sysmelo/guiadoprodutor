@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavigationTab, Project } from './types';
 import { getSavedProjects, saveProjects, getActiveProjectId, setActiveProjectId, defaultDemoProjects } from './utils/audioCalculator';
+import { subscribeToProjects, syncProjectsToFirebase } from './firebase';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardView } from './components/DashboardView';
@@ -21,17 +22,40 @@ import { AudioAnalyzerModal } from './components/AudioAnalyzerModal';
 import { DelayCalculatorModal } from './components/DelayCalculatorModal';
 import { ShortcutsModal } from './components/ShortcutsModal';
 import { GitHubExportModal } from './components/GitHubExportModal';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { MobileDrawer } from './components/MobileDrawer';
 
 export const App: React.FC = () => {
   const [currentTab, setCurrentTab] = useState<NavigationTab>('dashboard');
   const [projects, setProjects] = useState<Project[]>(() => getSavedProjects());
   const [activeProjectId, setActiveId] = useState<string>(() => getActiveProjectId());
+  const [isFirebaseSynced, setIsFirebaseSynced] = useState<boolean>(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState<boolean>(false);
 
   // Modals
   const [isAnalyzerOpen, setIsAnalyzerOpen] = useState<boolean>(false);
   const [isDelayCalcOpen, setIsDelayCalcOpen] = useState<boolean>(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState<boolean>(false);
   const [isGitHubModalOpen, setIsGitHubModalOpen] = useState<boolean>(false);
+
+  // 1. Conexão em tempo real com Firebase Firestore + Suporte Offline Automático
+  useEffect(() => {
+    const unsubscribe = subscribeToProjects(
+      (firestoreProjects, isFromCache) => {
+        if (firestoreProjects && firestoreProjects.length > 0) {
+          setProjects(firestoreProjects);
+          setIsFirebaseSynced(!isFromCache);
+        }
+      },
+      (err) => {
+        console.warn('[Firebase] Usando modo local offline:', err);
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   // Global Keyboard Shortcuts (Ctrl/Cmd + 1-9, 0, P, comma, F, D, /, Escape)
   useEffect(() => {
@@ -149,16 +173,18 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Sync projects to localStorage
+  // Sync projects to Firestore and LocalStorage
   const handleUpdateProject = (updated: Project) => {
     const newProjects = projects.map(p => p.id === updated.id ? updated : p);
     setProjects(newProjects);
     saveProjects(newProjects);
+    syncProjectsToFirebase(newProjects);
   };
 
   const handleSaveProjects = (newProjects: Project[]) => {
     setProjects(newProjects);
     saveProjects(newProjects);
+    syncProjectsToFirebase(newProjects);
   };
 
   const handleSelectProject = (id: string) => {
@@ -170,6 +196,7 @@ export const App: React.FC = () => {
     if (confirm('Deseja restaurar os projetos originais de demonstração?')) {
       setProjects(defaultDemoProjects);
       saveProjects(defaultDemoProjects);
+      syncProjectsToFirebase(defaultDemoProjects);
       setActiveId(defaultDemoProjects[0].id);
       setActiveProjectId(defaultDemoProjects[0].id);
       alert('Dados restaurados com sucesso.');
@@ -185,16 +212,18 @@ export const App: React.FC = () => {
         currentTab={currentTab}
         activeProject={activeProject}
         projects={projects}
+        isFirebaseSynced={isFirebaseSynced}
         onSelectProject={handleSelectProject}
         onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
         onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         onOpenGitHubExport={() => setIsGitHubModalOpen(true)}
+        onOpenMenu={() => setIsMobileDrawerOpen(true)}
       />
 
       {/* Main Studio Body (Sidebar + Content) */}
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        {/* Studio Sidebar */}
+        {/* Studio Sidebar (Desktop/Tablet) */}
         <Sidebar
           currentTab={currentTab}
           onTabChange={setCurrentTab}
@@ -206,24 +235,21 @@ export const App: React.FC = () => {
         />
 
         {/* Scrollable View Container */}
-        <main className="flex-1 overflow-y-auto bg-[#0B0E11] pb-10">
+        <main className="flex-1 overflow-y-auto bg-[#0B0E11] pb-24 md:pb-10">
           {currentTab === 'dashboard' && (
             <DashboardView
-              onNavigate={setCurrentTab}
               activeProject={activeProject}
               projects={projects}
+              onNavigate={setCurrentTab}
               onSelectProject={handleSelectProject}
               onUpdateProject={handleUpdateProject}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
-              onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
             />
           )}
 
           {currentTab === 'studio_one' && (
             <StudioOneWorkflowView
+              activeProject={activeProject}
               onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
-              onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
             />
           )}
 
@@ -240,8 +266,7 @@ export const App: React.FC = () => {
           {currentTab === 'vocal_recording' && (
             <VocalRecordingView
               activeProject={activeProject}
-              onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+              onUpdateProject={handleUpdateProject}
             />
           )}
 
@@ -249,32 +274,31 @@ export const App: React.FC = () => {
             <MixView
               activeProject={activeProject}
               onUpdateProject={handleUpdateProject}
-              onNavigate={setCurrentTab}
             />
           )}
 
           {currentTab === 'vocal_cleaning' && (
             <VocalCleaningView
-              onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+              activeProject={activeProject}
             />
           )}
 
           {currentTab === 'instruments' && (
             <InstrumentsView
-              onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+              activeProject={activeProject}
             />
           )}
 
           {currentTab === 'genres' && (
-            <GenresView onNavigate={setCurrentTab} />
+            <GenresView
+              activeProject={activeProject}
+            />
           )}
 
           {currentTab === 'master' && (
             <MasterView
-              onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+              activeProject={activeProject}
+              onUpdateProject={handleUpdateProject}
             />
           )}
 
@@ -283,17 +307,13 @@ export const App: React.FC = () => {
           )}
 
           {currentTab === 'mix_doctor' && (
-            <MixDoctorView
-              onNavigate={setCurrentTab}
-              onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
-            />
+            <MixDoctorView />
           )}
 
           {currentTab === 'export' && (
             <ExportView
               activeProject={activeProject}
               onUpdateProject={handleUpdateProject}
-              onNavigate={setCurrentTab}
             />
           )}
 
@@ -309,77 +329,75 @@ export const App: React.FC = () => {
           {currentTab === 'settings' && (
             <SettingsOfflineView
               onResetData={handleResetData}
-              onProjectsUpdated={(newProjects) => {
-                setProjects(newProjects);
-                if (newProjects.length > 0) {
-                  setActiveId(newProjects[0].id);
-                  setActiveProjectId(newProjects[0].id);
-                }
-              }}
+              onProjectsUpdated={handleSaveProjects}
             />
           )}
         </main>
       </div>
 
-      {/* Sleek Interface Studio Status Footer Bar */}
-      <footer className="h-10 bg-[#0E1116] border-t border-[#2A2F36] px-6 flex items-center justify-between text-[10px] text-gray-500 uppercase tracking-widest shrink-0">
-        <div className="flex items-center gap-6">
-          <span className="flex items-center gap-2">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.8)] animate-pulse" />
-            <span className="text-gray-400">Local Storage Ready</span>
-          </span>
-          <span className="hidden sm:flex items-center gap-1.5 text-gray-400">
-            <span className="text-cyan-400 font-mono">100% OFFLINE</span>
-          </span>
-          {activeProject && (
-            <span className="hidden md:inline text-gray-400">
-              PROJETO: <span className="text-white font-mono font-semibold">{activeProject.name}</span> ({activeProject.bpm} BPM)
-            </span>
-          )}
-        </div>
+      {/* Floating FFT Realtime Audio Spectrum Analyzer Modal */}
+      {isAnalyzerOpen && (
+        <AudioAnalyzerModal
+          isOpen={isAnalyzerOpen}
+          onClose={() => setIsAnalyzerOpen(false)}
+          activeProjectBpm={activeProject?.bpm || 140}
+          activeProjectKey={activeProject?.key || 'F# Menor'}
+        />
+      )}
 
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-gray-400">Progresso da Mix:</span>
-            <span className="text-cyan-400 font-bold font-mono">{activeProject?.mixProgress || 0}%</span>
-          </div>
-          <div className="w-28 sm:w-36 h-1.5 bg-[#1E2329] rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-cyan-500 transition-all duration-300 shadow-[0_0_8px_rgba(6,182,212,0.6)]"
-              style={{ width: `${activeProject?.mixProgress || 0}%` }}
-            />
-          </div>
-          <span className="hidden lg:inline text-gray-600">&copy; Melo Mix Assistant</span>
-        </div>
-      </footer>
+      {/* Floating BPM Delay & Reverb Timing Calculator Modal */}
+      {isDelayCalcOpen && (
+        <DelayCalculatorModal
+          isOpen={isDelayCalcOpen}
+          onClose={() => setIsDelayCalcOpen(false)}
+          currentBpm={activeProject?.bpm || 140}
+        />
+      )}
 
-      {/* Web Audio API Real-time Spectrum Analyzer Modal */}
-      <AudioAnalyzerModal
-        isOpen={isAnalyzerOpen}
-        onClose={() => setIsAnalyzerOpen(false)}
+      {/* Global Hotkeys & Studio Shortcuts Modal */}
+      {isShortcutsOpen && (
+        <ShortcutsModal
+          isOpen={isShortcutsOpen}
+          onClose={() => setIsShortcutsOpen(false)}
+          onNavigate={(tab) => {
+            setCurrentTab(tab);
+            setIsShortcutsOpen(false);
+          }}
+        />
+      )}
+
+      {/* GitHub Repository & Netlify Deployment Assistant Modal */}
+      {isGitHubModalOpen && (
+        <GitHubExportModal
+          isOpen={isGitHubModalOpen}
+          onClose={() => setIsGitHubModalOpen(false)}
+        />
+      )}
+
+      {/* Mobile Full Slide-Over Navigation Drawer */}
+      <MobileDrawer
+        isOpen={isMobileDrawerOpen}
+        onClose={() => setIsMobileDrawerOpen(false)}
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        activeProject={activeProject}
+        projects={projects}
+        isFirebaseSynced={isFirebaseSynced}
+        onSelectProject={handleSelectProject}
+        onOpenAnalyzer={() => setIsAnalyzerOpen(true)}
+        onOpenDelayCalc={() => setIsDelayCalcOpen(true)}
+        onOpenShortcuts={() => setIsShortcutsOpen(true)}
       />
 
-      {/* BPM to Delay & Reverb ms Calculator Modal */}
-      <DelayCalculatorModal
-        isOpen={isDelayCalcOpen}
-        onClose={() => setIsDelayCalcOpen(false)}
-        initialBpm={activeProject?.bpm || 120}
-      />
-
-      {/* Global Keyboard Shortcuts Cheat Sheet Modal */}
-      <ShortcutsModal
-        isOpen={isShortcutsOpen}
-        onClose={() => setIsShortcutsOpen(false)}
-      />
-
-      {/* GitHub Export Modal */}
-      <GitHubExportModal
-        isOpen={isGitHubModalOpen}
-        onClose={() => setIsGitHubModalOpen(false)}
+      {/* Mobile 1-Thumb Bottom Navigation Bar */}
+      <MobileBottomNav
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        onOpenMenu={() => setIsMobileDrawerOpen(true)}
+        isMenuOpen={isMobileDrawerOpen}
       />
     </div>
   );
 };
 
 export default App;
-
